@@ -1,0 +1,3 @@
+"""
+Инфраструктурный слой (Infrastructure Layer)
+"""
