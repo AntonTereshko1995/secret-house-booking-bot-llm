@@ -42,5 +42,5 @@ class Settings(BaseSettings):
         case_sensitive = False
 
 
-# Глобальный экземпляр настроек
+# Global settings instance
 settings = Settings()

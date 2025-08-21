@@ -12,7 +12,7 @@ def build_app_graph():
 
     g = StateGraph(AppState)
     g.add_node("router", router_node)
-    g.add_node("booking", booking_sub)          # сабграф как узел
+    g.add_node("booking", booking_sub)          # subgraph as node
     g.add_node("availability", availability_node)
     g.add_node("fallback", fallback_node)
     g.add_node("booking_exit", booking_exit_node)
@@ -20,7 +20,7 @@ def build_app_graph():
     g.add_edge(START, "router")
 
     def branch(s: AppState) -> str:
-        # приоритет активного сабграфа
+        # priority of active subgraph
         if s.get("active_subgraph") == "booking":
             return "booking"
         return s.get("intent", "unknown")

@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 
 
 class RateLimitMiddleware(BaseMiddleware):
-    """Middleware для ограничения скорости запросов"""
+    """Middleware for request rate limiting"""
     
     def __init__(self):
         super().__init__()
@@ -34,7 +34,7 @@ class RateLimitMiddleware(BaseMiddleware):
         key = f"rate_limit:{user_id}"
         
         try:
-            # Проверяем количество запросов
+            # Check request count
             current_count = await self.redis.get(key)
             
             if current_count and int(current_count) >= self.rate_limit:
@@ -44,16 +44,16 @@ class RateLimitMiddleware(BaseMiddleware):
                 )
                 return
             
-            # Увеличиваем счетчик
+            # Increment counter
             pipe = self.redis.pipeline()
             pipe.incr(key)
             pipe.expire(key, 60)  # TTL 60 секунд
             await pipe.execute()
             
-            # Продолжаем обработку
+            # Continue processing
             return await handler(event, data)
             
         except Exception as e:
             logger.error("Ошибка в rate limit middleware", exc_info=e)
-            # В случае ошибки продолжаем обработку
+            # In case of error continue processing
             return await handler(event, data)

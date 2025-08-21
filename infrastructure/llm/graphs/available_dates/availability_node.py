@@ -7,12 +7,12 @@ svc = BookingService()
 date_extractor = DateExtractor()
 
 async def availability_node(s: AppState) -> Dict[str, Any]:
-    # Пытаемся вытащить месяц из текста; fallback — текущий месяц
+    # Try to extract month from text; fallback - current month
     month_start, month_end, matched_label = date_extractor.month_bounds_from_text(s.get("text", ""))
 
-    # Сервисный вызов: получаем свободные даты/окна (сделай метод в своём сервисе)
-    # Ожидается, что вернёт строку/список — отформатируй как тебе нужно
+    # Service call: get available dates/windows (implement method in your service)
+    # Expected to return string/list - format as needed
     data = await svc.availability_for_period(month_start, month_end)
 
-    # Никакой бизнес-логики форматирования в графе — минимальный ответ
-    return {"reply": f"{data}\n(запрос: {matched_label})"}
+    # No business logic formatting in graph - minimal response
+    return {"reply": f"{data}\n(request: {matched_label})"}

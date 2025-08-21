@@ -3,17 +3,17 @@ from datetime import datetime
 
 def is_time(s: str) -> bool:
     s = s.strip()
-    if re.fullmatch(r'([01]?\d|2[0-3])', s):  # только час: "12", "9", "23"
+    if re.fullmatch(r'([01]?\d|2[0-3])', s):  # hour only: "12", "9", "23"
         return True
-    if re.fullmatch(r'([01]\d|2[0-3]):[0-5]\d', s):  # час:минуты: "12:00", "09:30"
+    if re.fullmatch(r'([01]\d|2[0-3]):[0-5]\d', s):  # hour:minutes: "12:00", "09:30"
         return True
     return False
 
 def norm_time(s: str) -> str:
     s = s.strip()
     if ':' in s:
-        return s  # уже в правильном формате
-    # Если только час, добавляем ":00"
+        return s  # already in correct format
+    # If only hour, add ":00"
     hour = int(s)
     return f"{hour:02d}:00"
 

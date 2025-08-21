@@ -6,12 +6,12 @@ from infrastructure.llm.graphs.app.app_graph_builder import build_app_graph
 router = Router()
 logger = get_logger(__name__)
 
-# Создаем граф один раз при импорте
+# Create graph once on import
 graph = build_app_graph()
 
 @router.message(F.text.startswith("/start"))
 async def start_command(message: types.Message):
-    """Обработчик команды /start"""
+    """Handler for /start command"""
     await message.answer(
         "Привет! Я бот для бронирования секретного дома. "
         "Напиши, что хочешь забронировать. "
@@ -23,7 +23,7 @@ async def handle_message(message: types.Message, state: FSMContext):
     thread_id = f"{message.chat.id}:{message.from_user.id}"
     
     try:
-        # Пытаемся получить последнее состояние
+        # Try to get previous state
         checkpoint = await graph.aget_state(config={"configurable": {"thread_id": thread_id}})
         previous_state = checkpoint.values if checkpoint else {}
     except:
@@ -38,13 +38,13 @@ async def handle_message(message: types.Message, state: FSMContext):
             "intent": previous_state.get("intent"),
             }
         
-        # Получаем результат из графа
+        # Get result from graph
         result = await graph.ainvoke(
             graph_state,
             config={"configurable": {"thread_id": thread_id}}
         )
         
-        # Отправляем ответ
+        # Send response
         reply = result.get("reply", "Извините, произошла ошибка")
         await message.answer(reply)
         

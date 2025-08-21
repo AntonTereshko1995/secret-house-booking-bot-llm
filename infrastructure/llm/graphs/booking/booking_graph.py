@@ -44,7 +44,7 @@ async def ask_or_fill(state: BookingState) -> BookingState:
             if parsed:
                 ctx.update(parsed)
         except Exception:
-            # не роняем поток, если LLM недоступен — просто идём дальше
+            # don't crash flow if LLM is unavailable - just continue
             pass
 
     # 2) Строгое дозаполнение текущего недостающего поля по ответу пользователя
@@ -70,7 +70,7 @@ async def ask_or_fill(state: BookingState) -> BookingState:
         elif miss=="COMMENT":
             ctx[miss]=None if text.lower() in {"нет","no","-"} else text
 
-    # 3) Если всё ещё не хватает — задаём следующий конкретный вопрос
+    # 3) If still missing - ask next specific question
     miss = _first_missing(ctx)
     if miss:
         return {
@@ -79,10 +79,10 @@ async def ask_or_fill(state: BookingState) -> BookingState:
             "done": False,
             "await_input": True,
             "last_asked": miss,
-            "active_subgraph": "booking"  # Добавляем для передачи в основной граф
+            "active_subgraph": "booking"  # Add for propagation to main graph
         }
 
-    # 4) Все поля собраны — показываем резюме и ждём "подтверждаю"
+    # 4) All fields collected - show summary and wait for "confirm"
     summary = (
         "📋 Резюме заявки:\n"
         f"Тариф: {ctx['TARIFF']}\n"
@@ -103,12 +103,12 @@ async def ask_or_fill(state: BookingState) -> BookingState:
             "reply": summary,
             "done": True,
             "await_input": True,  # ← это читает branch() и уводит в END
-            "active_subgraph": "booking"  # Добавляем для передачи в основной граф
+            "active_subgraph": "booking"  # Add for propagation to main graph
         }
 
 async def finalize(state: BookingState)->BookingState:
     ctx = state["context"]
-    # здесь можно проверить слот / правила
+    # here you can check slot / rules
     # booking_id = await create_booking(ctx)
     booking_id = 1111
     return {"reply": f"Готово! Бронь {booking_id}. ✅", "done": True}
@@ -126,15 +126,15 @@ def branch(s):
 def build_booking_graph():
     g = StateGraph(BookingState)
 
-    g.add_node("ask_or_fill", ask_or_fill)  # задаём вопросы/LLM-парсим/дособираем поля
-    g.add_node("finalize", finalize)        # сохраняем бронь, шлём итог
+    g.add_node("ask_or_fill", ask_or_fill)  # ask questions/LLM-parse/collect fields
+    g.add_node("finalize", finalize)        # save booking, send result
     g.add_edge(START, "ask_or_fill")
     g.add_conditional_edges(
         "ask_or_fill",  
         branch,
         {
             "final": "finalize",
-            "await": END,           # ✅ возврат в основной граф для ожидания ввода
+            "await": END,           # ✅ return to main graph for input waiting
             "continue": "ask_or_fill",
         },
     )
@@ -148,11 +148,11 @@ def build_booking_graph():
 
 def gen_png_graph(app_obj, name_photo: str = "graph.png") -> None:
     """
-    Генерирует PNG-изображение графа и сохраняет его в файл.
+    Generates PNG image of the graph and saves it to file.
     
     Args:
-        app_obj: Скомпилированный объект графа
-        name_photo: Имя файла для сохранения (по умолчанию "graph.png")
+        app_obj: Compiled graph object
+        name_photo: File name for saving (default "graph.png")
     """
     with open(name_photo, "wb") as f:
         f.write(app_obj.get_graph().draw_mermaid_png())

@@ -16,17 +16,17 @@ async def main():
     
     logger.info("Запуск Telegram бота")
     
-    # Инициализация бота и диспетчера
+    # Initialize bot and dispatcher
     bot = Bot(token=settings.telegram_bot_token)
     
-    # Используем Redis для хранения состояний FSM
+    # Use Redis for FSM state storage
     storage = RedisStorage.from_url(settings.redis_url)
     dp = Dispatcher(storage=storage)
     
-    # Регистрация middleware
+    # Register middleware
     dp.message.middleware(RateLimitMiddleware())
     
-    # Регистрация хендлеров
+    # Register handlers
     dp.include_router(messages.router)
     dp.include_router(callbacks.router)
     

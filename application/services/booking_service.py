@@ -1,5 +1,5 @@
 """
-Сервис бронирования
+Booking service
 """
 
 from typing import List, Optional
@@ -22,9 +22,9 @@ class BookingService:
         pass
     
     async def create_booking(self, request: BookingRequest) -> Booking:
-        """Создать новое бронирование"""
+        """Create new booking"""
         
-        # Проверяем доступность слота
+        # Check slot availability
         is_available = await self.availability_service.is_slot_available(
             request.start_date.strftime("%Y-%m-%d"),
             request.start_time,
@@ -35,7 +35,7 @@ class BookingService:
         if not is_available:
             raise ValueError("Выбранный слот недоступен")
         
-        # Создаем бронирование
+        # Create booking
         booking = Booking(
             user_id=request.user_id,
             tariff=request.tariff,
@@ -53,24 +53,24 @@ class BookingService:
             comment=request.comment,
         )
         
-        # Сохраняем в репозитории
+        # Save in repository
         saved_booking = await self.booking_repository.create(booking)
         
-        # Отправляем уведомление
+        # Send notification
         await self.notification_service.send_booking_confirmation(saved_booking)
         
         return saved_booking
     
     async def get_booking(self, booking_id: UUID) -> Optional[Booking]:
-        """Получить бронирование по ID"""
+        """Get booking by ID"""
         return await self.booking_repository.get_by_id(booking_id)
     
     async def get_user_bookings(self, user_id: int) -> List[Booking]:
-        """Получить все бронирования пользователя"""
+        """Get all user bookings"""
         return await self.booking_repository.get_by_user_id(user_id)
     
     async def cancel_booking(self, booking_id: UUID) -> bool:
-        """Отменить бронирование"""
+        """Cancel booking"""
         booking = await self.booking_repository.get_by_id(booking_id)
         if not booking:
             return False
@@ -82,5 +82,5 @@ class BookingService:
         return True
     
     async def check_availability(self, start_date: str, end_date: str) -> List[str]:
-        """Проверить доступность на указанные даты"""
+        """Check availability for specified dates"""
         return await self.availability_service.check_availability(start_date, end_date)

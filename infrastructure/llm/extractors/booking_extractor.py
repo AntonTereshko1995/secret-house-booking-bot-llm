@@ -23,8 +23,8 @@ class BookingExtractor:
         out = await self.llm.ainvoke(msg)
         data = self.parser.parse(out.content).model_dump(exclude_none=True)
 
-        # страховка на год (если модель внезапно не подставила)
+        # Year insurance (if model didn't add year)
         for k in ("START_DATE", "FINISH_DATE"):
-            if k in data and len(data[k]) == 5:   # ДД.ММ
+            if k in data and len(data[k]) == 5:   # DD.MM
                 data[k] = f"{data[k]}.{year}"
         return data

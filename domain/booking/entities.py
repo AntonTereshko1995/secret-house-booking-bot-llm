@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 
 class Booking(BaseModel):
-    """Сущность бронирования"""
+    """Booking entity"""
     
     id: UUID = Field(default_factory=uuid4)
     user_id: int
@@ -36,7 +36,7 @@ class Booking(BaseModel):
 
 
 class BookingRequest(BaseModel):
-    """Запрос на бронирование"""
+    """Booking request"""
     
     user_id: int
     tariff: str

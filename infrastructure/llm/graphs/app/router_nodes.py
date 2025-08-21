@@ -2,11 +2,11 @@ import re
 from typing import Dict, Any
 from infrastructure.llm.graphs.common.graph_state import AppState
 
-# простой роутер; легко заменить на LLM-классификатор
+# simple router; easy to replace with LLM classifier
 async def router_node(s: AppState) -> Dict[str, Any]:
     t = (s.get("text") or "").lower()
 
-    # Если уже внутри сабграфа — продолжить его
+    # If already inside subgraph - continue it
     if s.get("active_subgraph") == "booking":
         return {"intent": "booking"}
 

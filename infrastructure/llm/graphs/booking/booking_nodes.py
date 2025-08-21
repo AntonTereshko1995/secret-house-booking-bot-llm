@@ -12,9 +12,9 @@ async def parse_input(state):
     return {"ctx": ctx, "missing": missing}
 
 async def booking_exit_node(s: AppState) -> Dict[str, Any]:
-    # Сбрасываем active_subgraph ТОЛЬКО если сабграф пометил завершение
+    # Reset active_subgraph ONLY if subgraph marked completion
     if s.get("done"):
-        # копию словаря безопаснее возвращать, чем мутировать вход
+        # safer to return dict copy than mutate input
         new_state = dict(s)
         new_state.pop("active_subgraph", None)
         return new_state

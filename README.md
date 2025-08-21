@@ -1,10 +1,10 @@
 # Secret House Booking Bot
 
-Telegram бот для бронирования секретного дома с использованием LLM и LangGraph.
+Telegram bot for booking a secret house using LLM and LangGraph.
 
-## Архитектура
+## Architecture
 
-Проект построен на принципах Clean Architecture:
+The project is built on Clean Architecture principles:
 
 ```
 ├─ apps/                    # Presentation Layer
@@ -16,46 +16,46 @@ Telegram бот для бронирования секретного дома с
 └─ infrastructure/          # Infrastructure Layer
 ```
 
-## Установка
+## Installation
 
-1. Клонируйте репозиторий:
+1. Clone the repository:
 ```bash
 git clone https://github.com/yourusername/secret-house-booking-bot.git
 cd secret-house-booking-bot
 ```
 
-2. Создайте виртуальное окружение:
+2. Create a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
-# или
+# or
 venv\Scripts\activate     # Windows
 ```
 
-3. Установите зависимости:
+3. Install dependencies:
 ```bash
 pip install -e .
 pip install -e ".[dev]"
 ```
 
-4. Скопируйте `.env.example` в `.env` и настройте переменные окружения:
+4. Copy `.env.example` to `.env` and configure environment variables:
 ```bash
 cp .env.example .env
 ```
 
-5. Запустите бота:
+5. Run the bot:
 ```bash
 python apps/telegram_bot/main.py
 ```
 
-## Разработка
+## Development
 
-### Запуск тестов
+### Running tests
 ```bash
 pytest
 ```
 
-### Линтинг и форматирование
+### Linting and formatting
 ```bash
 black .
 isort .
@@ -68,15 +68,15 @@ mypy .
 pre-commit install
 ```
 
-## Структура проекта
+## Project Structure
 
-- `apps/` - Приложения (Telegram Bot)
-- `core/` - Ядро приложения (конфигурация, DI, логирование)
-- `domain/` - Доменная логика (сущности, value objects, порты)
-- `application/` - Слой приложения (сервисы, workflows)
-- `infrastructure/` - Инфраструктура (БД, Redis, LLM, графы)
-- `tests/` - Тесты (unit, integration, e2e)
+- `apps/` - Applications (Telegram Bot)
+- `core/` - Application core (configuration, DI, logging)
+- `domain/` - Domain logic (entities, value objects, ports)
+- `application/` - Application layer (services, workflows)
+- `infrastructure/` - Infrastructure (DB, Redis, LLM, graphs)
+- `tests/` - Tests (unit, integration, e2e)
 
-## Лицензия
+## License
 
 MIT License

@@ -1,5 +1,5 @@
 """
-Пакет с вспомогательными модулями
+Package with helper modules
 """
 
 from core.utils.datetime_helper import is_time, norm_time, is_date, norm_date

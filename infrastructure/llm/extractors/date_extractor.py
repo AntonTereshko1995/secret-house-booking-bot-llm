@@ -28,44 +28,47 @@ class DateExtractor:
 
     def month_bounds_from_text(self, text: str) -> Tuple[datetime, datetime, str]:
         """
-        Извлекает границы месяца из текста.
-        Возвращает (начало_месяца, конец_месяца, метка_месяца)
+        Extracts month boundaries from text.
+        Returns (month_start, month_end, month_label)
         """
         now = datetime.now(TZ)
         
-        # Простые паттерны для определения месяца
+        # Simple patterns for month detection
         text_lower = text.lower()
         
-        # Текущий месяц
-        if any(word in text_lower for word in ["текущий", "этот", "сейчас", "теперь"]):
+        # Current month
+        if any(word in text_lower for word in ["текущий", "этот", "сейчас", "теперь", "current", "this", "now"]):
             month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
             if now.month == 12:
                 month_end = now.replace(year=now.year + 1, month=1, day=1) - timedelta(seconds=1)
             else:
                 month_end = now.replace(month=now.month + 1, day=1) - timedelta(seconds=1)
-            return month_start, month_end, "текущий месяц"
+            return month_start, month_end, "current month"
         
-        # Следующий месяц
-        if any(word in text_lower for word in ["следующий", "будущий"]):
+        # Next month
+        if any(word in text_lower for word in ["следующий", "будущий", "next", "future"]):
             if now.month == 12:
                 month_start = now.replace(year=now.year + 1, month=1, day=1)
                 month_end = now.replace(year=now.year + 1, month=2, day=1) - timedelta(seconds=1)
             else:
                 month_start = now.replace(month=now.month + 1, day=1)
                 month_end = now.replace(month=now.month + 2, day=1) - timedelta(seconds=1)
-            return month_start, month_end, "следующий месяц"
+            return month_start, month_end, "next month"
         
-        # Конкретные месяцы
+        # Specific months
         months = {
             "январь": 1, "февраль": 2, "март": 3, "апрель": 4,
             "май": 5, "июнь": 6, "июль": 7, "август": 8,
-            "сентябрь": 9, "октябрь": 10, "ноябрь": 11, "декабрь": 12
+            "сентябрь": 9, "октябрь": 10, "ноябрь": 11, "декабрь": 12,
+            "january": 1, "february": 2, "march": 3, "april": 4,
+            "may": 5, "june": 6, "july": 7, "august": 8,
+            "september": 9, "october": 10, "november": 11, "december": 12
         }
         
         for month_name, month_num in months.items():
             if month_name in text_lower:
                 year = now.year
-                # Если месяц уже прошел в этом году, берем следующий год
+                # If month has already passed this year, take next year
                 if month_num < now.month:
                     year += 1
                 
@@ -77,11 +80,11 @@ class DateExtractor:
                 
                 return month_start, month_end, month_name
         
-        # По умолчанию - текущий месяц
+        # Default - current month
         month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         if now.month == 12:
             month_end = now.replace(year=now.year + 1, month=1, day=1) - timedelta(seconds=1)
         else:
             month_end = now.replace(month=now.month + 1, day=1) - timedelta(seconds=1)
         
-        return month_start, month_end, "текущий месяц"
+        return month_start, month_end, "current month"

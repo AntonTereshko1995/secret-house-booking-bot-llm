@@ -1,3 +1,3 @@
 """
-Приложения (Presentation Layer)
+Applications (Presentation Layer)
 """

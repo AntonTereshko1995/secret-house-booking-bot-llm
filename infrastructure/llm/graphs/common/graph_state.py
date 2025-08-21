@@ -5,13 +5,13 @@ class AppState(TypedDict, total=False):
     user_id: int
     text: str
     intent: Literal["booking", "availability", "change", "price", "faq", "unknown"]
-    active_subgraph: Optional[str]  # текущий активный подграф
-    context: dict            # сюда складываем накопленные поля брони
-    reply: str               # что отправить в чат
-    await_input: Optional[bool]  # ожидает ли граф ввода от пользователя
+    active_subgraph: Optional[str]  # current active subgraph
+    context: dict            # accumulated booking fields
+    reply: str               # what to send to chat
+    await_input: Optional[bool]  # whether graph awaits user input
 
 class BookingState(TypedDict, total=False):
-    context: dict       # копим поля здесь
-    text: str           # последнее пользовательское сообщение
-    reply: str          # ответ пользователю
+    context: dict       # accumulate fields here
+    text: str           # last user message
+    reply: str          # response to user
     done: bool

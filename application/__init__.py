@@ -1,3 +1,3 @@
 """
-Слой приложения (Application Layer)
+Application Layer
 """
