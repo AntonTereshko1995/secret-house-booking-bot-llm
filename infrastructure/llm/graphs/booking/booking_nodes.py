@@ -12,10 +12,6 @@ async def parse_input(state):
     return {"ctx": ctx, "missing": missing}
 
 async def booking_exit_node(s: AppState) -> Dict[str, Any]:
-    # Reset active_subgraph ONLY if subgraph marked completion
-    if s.get("done"):
-        # safer to return dict copy than mutate input
-        new_state = dict(s)
-        new_state.pop("active_subgraph", None)
-        return new_state
-    return {}
+    print(f"DEBUG booking_exit_node: done={s.get('done')}, await_input={s.get('await_input')}")
+    # Always preserve the state, let the main graph handle routing
+    return s

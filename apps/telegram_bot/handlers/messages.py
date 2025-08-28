@@ -26,7 +26,9 @@ async def handle_message(message: types.Message, state: FSMContext):
         # Try to get previous state
         checkpoint = await graph.aget_state(config={"configurable": {"thread_id": thread_id}})
         previous_state = checkpoint.values if checkpoint else {}
-    except:
+        logger.info(f"Retrieved state for {thread_id}: {previous_state}")
+    except Exception as e:
+        logger.error(f"Error getting state for {thread_id}: {e}")
         previous_state = {}
 
     try:
@@ -36,13 +38,20 @@ async def handle_message(message: types.Message, state: FSMContext):
             "active_subgraph": previous_state.get("active_subgraph"),
             "context": previous_state.get("context", {}),
             "intent": previous_state.get("intent"),
-            }
+            "await_input": previous_state.get("await_input"),
+            "done": previous_state.get("done"),
+            "last_asked": previous_state.get("last_asked"),
+        }
+        
+        logger.info(f"Graph state for {thread_id}: {graph_state}")
         
         # Get result from graph
         result = await graph.ainvoke(
             graph_state,
             config={"configurable": {"thread_id": thread_id}}
         )
+        
+        logger.info(f"Graph result for {thread_id}: {result}")
         
         # Send response
         reply = result.get("reply", "Извините, произошла ошибка")

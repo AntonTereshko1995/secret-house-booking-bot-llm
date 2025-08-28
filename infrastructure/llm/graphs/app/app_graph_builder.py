@@ -1,9 +1,8 @@
 from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import MemorySaver
 from infrastructure.llm.graphs.app.router_nodes import router_node
 from infrastructure.llm.graphs.available_dates.availability_node import availability_node
 from infrastructure.llm.graphs.booking.booking_graph import build_booking_graph
-from infrastructure.llm.graphs.booking.booking_nodes import booking_exit_node
-from infrastructure.llm.graphs.common.checkpoint_store import create_checkpointer
 from infrastructure.llm.graphs.common.graph_state import AppState
 from infrastructure.llm.graphs.fallback.fallback_node import fallback_node
 
@@ -15,13 +14,15 @@ def build_app_graph():
     g.add_node("booking", booking_sub)          # subgraph as node
     g.add_node("availability", availability_node)
     g.add_node("fallback", fallback_node)
-    g.add_node("booking_exit", booking_exit_node)
 
     g.add_edge(START, "router")
 
     def branch(s: AppState) -> str:
         # priority of active subgraph
         if s.get("active_subgraph") == "booking":
+            return "booking"
+        # If we have booking context, continue booking
+        if s.get("context") and s.get("intent") == "booking":
             return "booking"
         return s.get("intent", "unknown")
 
@@ -36,9 +37,11 @@ def build_app_graph():
         },
     )
 
-    g.add_edge("booking", "booking_exit")
-    g.add_edge("booking_exit", END)
+    # Direct edge from booking to END - let the subgraph handle its own routing
+    g.add_edge("booking", END)
     g.add_edge("availability", END)
     g.add_edge("fallback", END)
 
-    return g.compile(checkpointer=create_checkpointer)
+    # Add memory saver for state persistence
+    memory = MemorySaver()
+    return g.compile(checkpointer=memory)
