@@ -3,10 +3,9 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
 from uuid import UUID
 
-from .entities import Booking, BookingRequest
+from .entities import Booking
 
 
 class BookingRepository(ABC):
@@ -18,12 +17,12 @@ class BookingRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, booking_id: UUID) -> Optional[Booking]:
+    async def get_by_id(self, booking_id: UUID) -> Booking | None:
         """Get booking by ID"""
         pass
 
     @abstractmethod
-    async def get_by_user_id(self, user_id: int) -> List[Booking]:
+    async def get_by_user_id(self, user_id: int) -> list[Booking]:
         """Get user bookings"""
         pass
 
@@ -42,7 +41,7 @@ class AvailabilityService(ABC):
     """Port for availability service"""
 
     @abstractmethod
-    async def check_availability(self, start_date: str, end_date: str) -> List[str]:
+    async def check_availability(self, start_date: str, end_date: str) -> list[str]:
         """Check availability for specified dates"""
         pass
 

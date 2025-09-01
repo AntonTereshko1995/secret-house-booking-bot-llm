@@ -1,43 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep:*)",
-      "Bash(ls:*)",
-      "Bash(source:*)",
-      "Bash(find:*)",
-      "Bash(mv:*)",
-      "Bash(mkdir:*)",
-      "Bash(tree:*)",
-      "Bash(ruff:*)",
-      "Bash(touch:*)",
-      "Bash(cat:*)",
-      "Bash(ruff check:*)",
-      "Bash(pytest:*)",
-      "Bash(python:*)",
-      "Bash(python -m pytest:*)",
-      "Bash(python3 -m pytest:*)",
-      "WebFetch(domain:docs.anthropic.com)",
-      "WebFetch(domain:github.com)",
-      "Bash(sudo snap install:*)",
-      "Bash(pip install:*)",
-      "mcp__serena",
-      "mcp__archon",
-      "WebSearch",
-      "Bash(uv run ruff check:*)",
-      "Bash(PYTHONPATH=. python -m pytest tests/unit/application/services/test_availability_service.py -v -o addopts=\"\")",
-      "Bash(PYTHONPATH=. python:*)",
-      "Bash(gh issue view:*)",
-      "Bash(brew install:*)",
-      "Bash(gh auth:*)",
-      "Bash(gh issue:*)",
-      "Bash(git checkout:*)",
-      "Bash(make lint:*)",
+      "Bash(PYTHONPATH=/Users/a/secret-house-booking-bot-llm python apps/telegram_bot/main.py)",
+      "mcp__ide__getDiagnostics",
       "Bash(make:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "Bash(chmod:*)"
+      "mcp__serena__list_dir",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(git add:*)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
   }
 }

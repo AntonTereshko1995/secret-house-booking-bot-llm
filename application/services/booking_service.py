@@ -3,19 +3,13 @@ Booking service
 """
 
 from datetime import datetime
-from typing import List, Optional
 from uuid import UUID
 
-from domain.booking.entities import Booking, BookingRequest
-from domain.booking.availability import AvailabilityPeriod
-from domain.booking.ports import (
-    AvailabilityService,
-    BookingRepository,
-    NotificationService,
-)
 from application.services.availability_service import (
     AvailabilityService as AvailabilityServiceImpl,
 )
+from domain.booking.availability import AvailabilityPeriod
+from domain.booking.entities import Booking, BookingRequest
 
 
 class BookingService:
@@ -70,11 +64,11 @@ class BookingService:
 
         return saved_booking
 
-    async def get_booking(self, booking_id: UUID) -> Optional[Booking]:
+    async def get_booking(self, booking_id: UUID) -> Booking | None:
         """Get booking by ID"""
         return await self.booking_repository.get_by_id(booking_id)
 
-    async def get_user_bookings(self, user_id: int) -> List[Booking]:
+    async def get_user_bookings(self, user_id: int) -> list[Booking]:
         """Get all user bookings"""
         return await self.booking_repository.get_by_user_id(user_id)
 
@@ -90,7 +84,7 @@ class BookingService:
 
         return True
 
-    async def check_availability(self, start_date: str, end_date: str) -> List[str]:
+    async def check_availability(self, start_date: str, end_date: str) -> list[str]:
         """Check availability for specified dates"""
         return await self.availability_service.check_availability(start_date, end_date)
 

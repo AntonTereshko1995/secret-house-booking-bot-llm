@@ -2,17 +2,16 @@
 Интеграционные тесты для полного потока проверки доступности
 """
 
-import pytest
 from datetime import datetime, timedelta
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 from zoneinfo import ZoneInfo
 
+import pytest
+
+from domain.booking.availability import AvailabilityPeriod, AvailabilitySlot
 from infrastructure.llm.graphs.available_dates.availability_node import (
     availability_node,
 )
-from infrastructure.llm.extractors.date_extractor import DateExtractor
-from application.services.availability_service import AvailabilityService
-from domain.booking.availability import AvailabilitySlot, AvailabilityPeriod
 
 # Timezone для тестов
 TZ = ZoneInfo("Europe/Minsk")

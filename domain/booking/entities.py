@@ -3,7 +3,6 @@
 """
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -26,7 +25,7 @@ class Booking(BaseModel):
     secret_room: bool
     number_guests: int
     contact: str
-    comment: Optional[str] = None
+    comment: str | None = None
     status: str = Field(default="pending")  # pending, confirmed, cancelled
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
@@ -51,4 +50,4 @@ class BookingRequest(BaseModel):
     secret_room: bool
     number_guests: int
     contact: str
-    comment: Optional[str] = None
+    comment: str | None = None

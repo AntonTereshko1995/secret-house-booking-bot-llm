@@ -1,5 +1,6 @@
-from aiogram import Router, types, F
+from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
+
 from core.logging import get_logger
 from infrastructure.llm.graphs.app.app_graph_builder import build_app_graph
 

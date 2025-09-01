@@ -1,5 +1,3 @@
-import os
-from typing import Optional
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
@@ -15,8 +13,8 @@ class Settings(BaseSettings):
     redis_url: str = Field(..., env="REDIS_URL")
 
     # LLM
-    openai_api_key: Optional[str] = Field(None, env="OPENAI_API_KEY")
-    anthropic_api_key: Optional[str] = Field(None, env="ANTHROPIC_API_KEY")
+    openai_api_key: str | None = Field(None, env="OPENAI_API_KEY")
+    anthropic_api_key: str | None = Field(None, env="ANTHROPIC_API_KEY")
 
     # Vector Database
     chroma_host: str = Field("localhost", env="CHROMA_HOST")
@@ -27,7 +25,7 @@ class Settings(BaseSettings):
     log_format: str = Field("json", env="LOG_FORMAT")
 
     # Telemetry
-    otel_endpoint: Optional[str] = Field(None, env="OTEL_ENDPOINT")
+    otel_endpoint: str | None = Field(None, env="OTEL_ENDPOINT")
     otel_service_name: str = Field("booking-bot", env="OTEL_SERVICE_NAME")
 
     # Security
@@ -36,6 +34,11 @@ class Settings(BaseSettings):
 
     # Timezone
     timezone: str = Field("Europe/Minsk", env="TIMEZONE")
+
+    # Pricing
+    pricing_cache_ttl: int = Field(300, env="PRICING_CACHE_TTL")
+    default_tariff: str = Field("standard", env="DEFAULT_TARIFF")
+    pricing_config_path: str = Field("config/pricing_config.json", env="PRICING_CONFIG_PATH")
 
     class Config:
         env_file = ".env"
