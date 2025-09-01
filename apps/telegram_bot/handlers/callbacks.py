@@ -14,7 +14,7 @@ logger = get_logger(__name__)
 @router.callback_query()
 async def handle_callback(callback: types.CallbackQuery, state: FSMContext):
     """Handler for all callback queries"""
-    
+
     try:
         # Process callback based on data
         if callback.data == "cancel":
@@ -27,9 +27,9 @@ async def handle_callback(callback: types.CallbackQuery, state: FSMContext):
             )
         else:
             await callback.message.edit_text("Неизвестная команда")
-            
+
         await callback.answer()
-        
+
     except Exception as e:
         logger.error("Ошибка обработки callback", exc_info=e)
         await callback.answer("Произошла ошибка", show_alert=True)

@@ -1,8 +1,11 @@
 from typing import Optional
 from pydantic import BaseModel, Field
 
+
 class BookingExtract(BaseModel):
-    TARIFF: Optional[str] = Field(None, description="Допустимо: '12 часов','1 сутки', ...")
+    TARIFF: Optional[str] = Field(
+        None, description="Допустимо: '12 часов','1 сутки', ..."
+    )
     FIRST_BEDROOM: Optional[bool] = None
     SECOND_BEDROOM: Optional[bool] = None
     SAUNA: Optional[bool] = None

@@ -1,17 +1,20 @@
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
 from infrastructure.llm.graphs.app.router_nodes import router_node
-from infrastructure.llm.graphs.available_dates.availability_node import availability_node
+from infrastructure.llm.graphs.available_dates.availability_node import (
+    availability_node,
+)
 from infrastructure.llm.graphs.booking.booking_graph import build_booking_graph
 from infrastructure.llm.graphs.common.graph_state import AppState
 from infrastructure.llm.graphs.fallback.fallback_node import fallback_node
+
 
 def build_app_graph():
     booking_sub = build_booking_graph()
 
     g = StateGraph(AppState)
     g.add_node("router", router_node)
-    g.add_node("booking", booking_sub)          # subgraph as node
+    g.add_node("booking", booking_sub)  # subgraph as node
     g.add_node("availability", availability_node)
     g.add_node("fallback", fallback_node)
 
@@ -27,7 +30,8 @@ def build_app_graph():
         return s.get("intent", "unknown")
 
     g.add_conditional_edges(
-        "router", branch,
+        "router",
+        branch,
         {
             "booking": "booking",
             "availability": "availability",

@@ -10,8 +10,8 @@ SYSTEM_TMPL = """Ты извлекаешь параметры бронирова
 
 from langchain.prompts import ChatPromptTemplate
 
+
 def make_prompt(format_instructions: str) -> ChatPromptTemplate:
-    return ChatPromptTemplate.from_messages([
-        ("system", SYSTEM_TMPL + "\n{format_instructions}"),
-        ("user", "{text}")
-    ]).partial(format_instructions=format_instructions)
+    return ChatPromptTemplate.from_messages(
+        [("system", SYSTEM_TMPL + "\n{format_instructions}"), ("user", "{text}")]
+    ).partial(format_instructions=format_instructions)

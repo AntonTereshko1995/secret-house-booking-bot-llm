@@ -8,6 +8,7 @@ from infrastructure.llm.schemas.booking_extract_schema import BookingExtract
 
 TZ = ZoneInfo(settings.timezone)
 
+
 class BookingExtractor:
     def __init__(self):
         self.llm = get_llm()
@@ -25,6 +26,6 @@ class BookingExtractor:
 
         # Year insurance (if model didn't add year)
         for k in ("START_DATE", "FINISH_DATE"):
-            if k in data and len(data[k]) == 5:   # DD.MM
+            if k in data and len(data[k]) == 5:  # DD.MM
                 data[k] = f"{data[k]}.{year}"
         return data

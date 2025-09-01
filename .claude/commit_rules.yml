@@ -1,0 +1,35 @@
+# порядок важен: сверху — более специфичные группы
+groups:
+  - name: docs
+    type: docs
+    patterns: ["**/*.md", "docs/**", "README*", "CHANGELOG*", "**/*.mdx"]
+
+  - name: tests
+    type: test
+    patterns: ["test/**", "tests/**", "**/*_test.py", "**/*.spec.ts", "**/*.test.ts", "**/*.test.js"]
+
+  - name: ci
+    type: chore
+    patterns: [".github/**", ".gitlab-ci.yml", "Makefile", "Dockerfile", "docker/**", ".pre-commit-config.yaml"]
+
+  - name: frontend
+    type: feat
+    patterns: ["web/**", "frontend/**", "src/ui/**", "**/*.tsx", "**/*.jsx", "**/*.css"]
+
+  - name: backend
+    type: feat
+    patterns: ["app/**", "service/**", "src/**", "**/*.py", "**/*.go", "**/*.ts"]
+
+  - name: config
+    type: chore
+    patterns: ["**/*.json", "**/*.yaml", "**/*.yml", "**/*.toml", "**/*.ini", ".env.example"]
+
+# если файл не совпал ни с одной группой
+default:
+  name: misc
+  type: chore
+
+# как формировать сообщения коммитов (Conventional Commits)
+commit_format: "{type}: {summary}"
+# как формировать summary по умолчанию
+default_summary: "update {group}"
