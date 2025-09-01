@@ -3,12 +3,11 @@
 """
 
 from datetime import datetime, timedelta
-from typing import List
 from zoneinfo import ZoneInfo
 
 from core.config import settings
 from core.logging import get_logger
-from domain.booking.availability import AvailabilitySlot, AvailabilityPeriod
+from domain.booking.availability import AvailabilityPeriod, AvailabilitySlot
 from domain.booking.entities import Booking
 
 logger = get_logger(__name__)
@@ -103,7 +102,7 @@ class AvailabilityService:
 
     async def _get_bookings_for_period(
         self, start_date: datetime, end_date: datetime
-    ) -> List[Booking]:
+    ) -> list[Booking]:
         """
         Получить существующие бронирования для периода
 
@@ -116,14 +115,14 @@ class AvailabilityService:
         logger.debug("Using mock booking data - no real bookings returned")
         return []
 
-    def _is_date_booked(self, date, bookings: List[Booking]) -> bool:
+    def _is_date_booked(self, date, bookings: list[Booking]) -> bool:
         """Проверить, забронирована ли конкретная дата"""
         for booking in bookings:
             if booking.start_date.date() <= date <= booking.finish_date.date():
                 return True
         return False
 
-    def _get_booking_id_for_date(self, date, bookings: List[Booking]):
+    def _get_booking_id_for_date(self, date, bookings: list[Booking]):
         """Получить ID бронирования для конкретной даты"""
         for booking in bookings:
             if booking.start_date.date() <= date <= booking.finish_date.date():

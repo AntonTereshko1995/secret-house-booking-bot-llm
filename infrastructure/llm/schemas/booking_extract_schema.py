@@ -1,20 +1,20 @@
-from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
 class BookingExtract(BaseModel):
-    TARIFF: Optional[str] = Field(
+    TARIFF: str | None = Field(
         None, description="Допустимо: '12 часов','1 сутки', ..."
     )
-    FIRST_BEDROOM: Optional[bool] = None
-    SECOND_BEDROOM: Optional[bool] = None
-    SAUNA: Optional[bool] = None
-    PHOTOSHOOT: Optional[bool] = None
-    SECRET_ROOM: Optional[bool] = None
-    START_DATE: Optional[str] = Field(None, description="ДД.ММ.ГГГГ")
-    START_TIME: Optional[str] = Field(None, description="HH:MM 24h")
-    FINISH_DATE: Optional[str] = Field(None, description="ДД.ММ.ГГГГ")
-    FINISH_TIME: Optional[str] = Field(None, description="HH:MM 24h")
-    NUMBER_GUESTS: Optional[int] = None
-    CONTACT: Optional[str] = None
-    COMMENT: Optional[str] = None
+    FIRST_BEDROOM: bool | None = None
+    SECOND_BEDROOM: bool | None = None
+    SAUNA: bool | None = None
+    PHOTOSHOOT: bool | None = None
+    SECRET_ROOM: bool | None = None
+    START_DATE: str | None = Field(None, description="ДД.ММ.ГГГГ")
+    START_TIME: str | None = Field(None, description="HH:MM 24h")
+    FINISH_DATE: str | None = Field(None, description="ДД.ММ.ГГГГ")
+    FINISH_TIME: str | None = Field(None, description="HH:MM 24h")
+    NUMBER_GUESTS: int | None = None
+    CONTACT: str | None = None
+    COMMENT: str | None = None

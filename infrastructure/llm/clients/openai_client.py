@@ -1,4 +1,5 @@
 from langchain_openai import ChatOpenAI
+
 from core.config import settings
 
 

@@ -1,11 +1,12 @@
-from typing import Optional
-from langgraph.graph import StateGraph, START, END
+
+from langgraph.graph import END, START, StateGraph
+
 from core.utils.datetime_helper import (
+    extract_date_from_natural_language,
     is_date,
     is_time,
     norm_date,
     norm_time,
-    extract_date_from_natural_language,
 )
 from core.utils.string_helper import parse_yes_no
 from infrastructure.llm.extractors import booking_extractor
@@ -45,7 +46,7 @@ QUESTIONS = {
 booking_extractor = booking_extractor.BookingExtractor()
 
 
-def _first_missing(ctx: dict) -> Optional[str]:
+def _first_missing(ctx: dict) -> str | None:
     print(f"DEBUG _first_missing: ctx keys = {list(ctx.keys())}")
     for f in REQUIRED:
         if f not in ctx or ctx[f] in (None, ""):

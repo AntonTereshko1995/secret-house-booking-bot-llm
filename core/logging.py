@@ -1,7 +1,6 @@
-import sys
-from typing import Any, Dict
 import structlog
 from structlog.stdlib import LoggerFactory
+
 from .config import settings
 
 

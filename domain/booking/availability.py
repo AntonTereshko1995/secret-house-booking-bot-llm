@@ -3,9 +3,8 @@
 """
 
 from datetime import datetime
-from typing import List, Optional
-from uuid import UUID
 from decimal import Decimal
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 
@@ -15,8 +14,8 @@ class AvailabilitySlot(BaseModel):
 
     date: datetime
     is_available: bool
-    booking_id: Optional[UUID] = None
-    price: Optional[Decimal] = None
+    booking_id: UUID | None = None
+    price: Decimal | None = None
 
     class Config:
         from_attributes = True
@@ -27,7 +26,7 @@ class AvailabilityPeriod(BaseModel):
 
     start_date: datetime
     end_date: datetime
-    slots: List[AvailabilitySlot]
+    slots: list[AvailabilitySlot]
     total_available_days: int = Field(ge=0)
 
     class Config:
@@ -50,7 +49,7 @@ class AvailabilityResponse(BaseModel):
 
     period: AvailabilityPeriod
     message: str
-    suggestions: List[str] = Field(default_factory=list)
+    suggestions: list[str] = Field(default_factory=list)
 
     class Config:
         from_attributes = True

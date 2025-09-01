@@ -2,16 +2,17 @@
 Тесты для availability_node
 """
 
-import pytest
 from datetime import datetime, timedelta
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 from zoneinfo import ZoneInfo
 
+import pytest
+
+from domain.booking.availability import AvailabilityPeriod, AvailabilitySlot
 from infrastructure.llm.graphs.available_dates.availability_node import (
-    availability_node,
     _format_availability_response,
+    availability_node,
 )
-from domain.booking.availability import AvailabilitySlot, AvailabilityPeriod
 
 # Timezone для тестов
 TZ = ZoneInfo("Europe/Minsk")

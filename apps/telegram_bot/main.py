@@ -1,16 +1,14 @@
 import asyncio
 import sys
 from pathlib import Path
-from aiogram.fsm.storage.memory import MemoryStorage
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
-from core.config import settings
-from core.logging import setup_logging, get_logger
-from apps.telegram_bot.handlers import messages, callbacks
+from apps.telegram_bot.handlers import callbacks, messages
 from apps.telegram_bot.middlewares.rate_limit import RateLimitMiddleware
-
+from core.config import settings
+from core.logging import get_logger, setup_logging
 
 async def main():
     setup_logging()

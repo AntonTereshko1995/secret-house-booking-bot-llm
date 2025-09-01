@@ -2,13 +2,14 @@
 Тесты для AvailabilityService
 """
 
-import pytest
 from datetime import datetime, timedelta
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 from zoneinfo import ZoneInfo
 
+import pytest
+
 from application.services.availability_service import AvailabilityService
-from domain.booking.availability import AvailabilitySlot, AvailabilityPeriod
+from domain.booking.availability import AvailabilityPeriod
 from domain.booking.entities import Booking
 
 # Timezone для тестов

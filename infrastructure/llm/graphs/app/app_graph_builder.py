@@ -1,5 +1,6 @@
-from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import END, START, StateGraph
+
 from infrastructure.llm.graphs.app.router_nodes import router_node
 from infrastructure.llm.graphs.available_dates.availability_node import (
     availability_node,
@@ -7,6 +8,7 @@ from infrastructure.llm.graphs.available_dates.availability_node import (
 from infrastructure.llm.graphs.booking.booking_graph import build_booking_graph
 from infrastructure.llm.graphs.common.graph_state import AppState
 from infrastructure.llm.graphs.fallback.fallback_node import fallback_node
+from infrastructure.llm.graphs.pricing.pricing_node import pricing_node
 
 
 def build_app_graph():
@@ -16,6 +18,7 @@ def build_app_graph():
     g.add_node("router", router_node)
     g.add_node("booking", booking_sub)  # subgraph as node
     g.add_node("availability", availability_node)
+    g.add_node("pricing", pricing_node)
     g.add_node("fallback", fallback_node)
 
     g.add_edge(START, "router")
@@ -35,15 +38,17 @@ def build_app_graph():
         {
             "booking": "booking",
             "availability": "availability",
+            "price": "pricing",
             "change": "fallback",
             "faq": "fallback",
             "unknown": "fallback",
         },
     )
 
-    # Direct edge from booking to END - let the subgraph handle its own routing
+    # Direct edge from nodes to END - let each node handle its own completion
     g.add_edge("booking", END)
     g.add_edge("availability", END)
+    g.add_edge("pricing", END)
     g.add_edge("fallback", END)
 
     # Add memory saver for state persistence

@@ -1,4 +1,5 @@
-from typing import Any, Dict
+from typing import Any
+
 from infrastructure.llm.extractors.booking_extractor import BookingExtractor
 from infrastructure.llm.graphs.common.graph_state import AppState
 
@@ -13,7 +14,7 @@ async def parse_input(state):
     return {"ctx": ctx, "missing": missing}
 
 
-async def booking_exit_node(s: AppState) -> Dict[str, Any]:
+async def booking_exit_node(s: AppState) -> dict[str, Any]:
     print(
         f"DEBUG booking_exit_node: done={s.get('done')}, await_input={s.get('await_input')}"
     )

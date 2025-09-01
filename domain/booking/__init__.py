@@ -2,13 +2,13 @@
 Доменная логика бронирования
 """
 
-from .entities import Booking, BookingRequest
 from .availability import (
-    AvailabilitySlot,
     AvailabilityPeriod,
     AvailabilityRequest,
     AvailabilityResponse,
+    AvailabilitySlot,
 )
+from .entities import Booking, BookingRequest
 
 __all__ = [
     "Booking",

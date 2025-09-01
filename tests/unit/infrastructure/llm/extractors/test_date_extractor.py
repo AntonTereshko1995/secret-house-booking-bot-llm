@@ -2,10 +2,11 @@
 Тесты для улучшенного DateExtractor
 """
 
-import pytest
-from datetime import datetime, timedelta
-from unittest.mock import patch, MagicMock
+from datetime import datetime
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
+
+import pytest
 
 from infrastructure.llm.extractors.date_extractor import DateExtractor
 

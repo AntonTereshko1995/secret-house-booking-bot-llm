@@ -1,9 +1,10 @@
-from typing import Dict, Any
-from application.services.booking_service import BookingService
+from typing import Any
+
 from application.services.availability_service import AvailabilityService
-from infrastructure.llm.graphs.common.graph_state import AppState
-from infrastructure.llm.extractors.date_extractor import DateExtractor
+from application.services.booking_service import BookingService
 from core.logging import get_logger
+from infrastructure.llm.extractors.date_extractor import DateExtractor
+from infrastructure.llm.graphs.common.graph_state import AppState
 
 logger = get_logger(__name__)
 svc = BookingService()
@@ -11,7 +12,7 @@ availability_service = AvailabilityService()
 date_extractor = DateExtractor()
 
 
-async def availability_node(s: AppState) -> Dict[str, Any]:
+async def availability_node(s: AppState) -> dict[str, Any]:
     """
     Обрабатывает запросы на проверку доступности дат.
     Использует улучшенный DateExtractor для извлечения дат из текста.

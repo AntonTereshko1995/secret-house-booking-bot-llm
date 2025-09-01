@@ -1,11 +1,10 @@
 import re
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-from typing import Tuple, Optional, List
+
 from core.config import settings
 from core.logging import get_logger
 from infrastructure.llm.clients.openai_client import get_llm
-from infrastructure.llm.parsers.pydantic_factory import make_parser
 
 # from infrastructure.llm.prompts.extract_date_prompt import make_prompt
 # from infrastructure.llm.schemas.date_extract_schema import DateExtract
@@ -99,7 +98,7 @@ class DateExtractor:
 
     #     return data
 
-    def month_bounds_from_text(self, text: str) -> Tuple[datetime, datetime, str]:
+    def month_bounds_from_text(self, text: str) -> tuple[datetime, datetime, str]:
         """
         Extracts month boundaries from text.
         Returns (month_start, month_end, month_label)
@@ -207,7 +206,7 @@ class DateExtractor:
 
         return month_start, month_end, "current month"
 
-    def extract_specific_date(self, text: str) -> Optional[Tuple[datetime, str]]:
+    def extract_specific_date(self, text: str) -> tuple[datetime, str] | None:
         """
         Извлекает конкретную дату из текста.
         Возвращает (date, matched_text) или None если не найдено
@@ -342,7 +341,7 @@ class DateExtractor:
 
         return None
 
-    def extract_date_range(self, text: str) -> Optional[Tuple[datetime, datetime, str]]:
+    def extract_date_range(self, text: str) -> tuple[datetime, datetime, str] | None:
         """
         Извлекает диапазон дат из текста различных форматов.
         Поддерживает русский, английский и цифровой форматы, включая ISO даты.
@@ -477,7 +476,7 @@ class DateExtractor:
             year += 1
         return year
 
-    def extract_dates_from_text(self, text: str) -> Tuple[datetime, datetime, str]:
+    def extract_dates_from_text(self, text: str) -> tuple[datetime, datetime, str]:
         """
         Основной метод для извлечения дат из текста.
         Пробует разные стратегии: диапазон -> конкретная дата -> месяц

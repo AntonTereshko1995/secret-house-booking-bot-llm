@@ -1,10 +1,11 @@
 import re
-from typing import Dict, Any
+from typing import Any
+
 from infrastructure.llm.graphs.common.graph_state import AppState
 
 
 # simple router; easy to replace with LLM classifier
-async def router_node(s: AppState) -> Dict[str, Any]:
+async def router_node(s: AppState) -> dict[str, Any]:
     t = (s.get("text") or "").lower()
 
     # If already inside subgraph and waiting for input - continue it
@@ -25,6 +26,8 @@ async def router_node(s: AppState) -> Dict[str, Any]:
 
     if re.search(r"(заброниров|бронь|арендовать)", t):
         return {"intent": "booking", "active_subgraph": "booking"}
+    if re.search(r"(цен[аыу]|стоимост|сколько стоит|прайс|тариф|расценк|price|cost|how much)", t):
+        return {"intent": "price"}
     if re.search(r"(свободн|дат[ыа]|календар)", t):
         return {"intent": "availability"}
     if re.search(r"(измен|перенос)", t):
