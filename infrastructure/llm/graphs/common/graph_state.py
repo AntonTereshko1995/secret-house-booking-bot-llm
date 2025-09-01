@@ -6,12 +6,13 @@ class AppState(TypedDict, total=False):
     text: str
     intent: Literal["booking", "availability", "change", "price", "faq", "unknown"]
     active_subgraph: Optional[str]  # current active subgraph
-    context: dict            # accumulated booking fields
-    reply: str               # what to send to chat
+    context: dict  # accumulated booking fields
+    reply: str  # what to send to chat
     await_input: Optional[bool]  # whether graph awaits user input
 
+
 class BookingState(TypedDict, total=False):
-    context: dict       # accumulate fields here
-    text: str           # last user message
-    reply: str          # response to user
+    context: dict  # accumulate fields here
+    text: str  # last user message
+    reply: str  # response to user
     done: bool
