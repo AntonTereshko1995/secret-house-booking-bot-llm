@@ -1,4 +1,4 @@
-
+from enum import Enum
 from langgraph.graph import END, START, StateGraph
 
 from core.utils.datetime_helper import (
@@ -12,46 +12,175 @@ from core.utils.string_helper import parse_yes_no
 from infrastructure.llm.extractors import booking_extractor
 from infrastructure.llm.graphs.common.graph_state import BookingState
 
-REQUIRED = [
-    "TARIFF",
-    "START_DATE",
-    "START_TIME",
-    "FINISH_DATE",
-    "FINISH_TIME",
-    "FIRST_BEDROOM",
-    "SECOND_BEDROOM",
-    "SAUNA",
-    "PHOTOSHOOT",
-    "SECRET_ROOM",
-    "NUMBER_GUESTS",
-    "CONTACT",
-    "COMMENT",
-]
+
+class Tariff(Enum):
+    HOURS_12 = 0
+    DAY = 1
+    WORKER = 2
+    INCOGNITA_DAY = 3
+    INCOGNITA_HOURS = 4
+    DAY_FOR_COUPLE = 5
+
+
+class BookingField(Enum):
+    TARIFF = "TARIFF"
+    START_DATE = "START_DATE"
+    START_TIME = "START_TIME"
+    FINISH_DATE = "FINISH_DATE"
+    FINISH_TIME = "FINISH_TIME"
+    FIRST_BEDROOM = "FIRST_BEDROOM"
+    SECOND_BEDROOM = "SECOND_BEDROOM"
+    SAUNA = "SAUNA"
+    PHOTOSHOOT = "PHOTOSHOOT"
+    SECRET_ROOM = "SECRET_ROOM"
+    NUMBER_GUESTS = "NUMBER_GUESTS"
+    CONTACT = "CONTACT"
+    COMMENT = "COMMENT"
+
+
+# Define required fields for each rate type
+RATE_REQUIREMENTS = {
+    Tariff.DAY: [
+        BookingField.SAUNA,
+        BookingField.PHOTOSHOOT,
+        BookingField.START_DATE,
+        BookingField.START_TIME,
+        BookingField.FINISH_DATE,
+        BookingField.FINISH_TIME,
+        BookingField.NUMBER_GUESTS,
+    ],
+    Tariff.DAY_FOR_COUPLE: [
+        BookingField.SAUNA,
+        BookingField.PHOTOSHOOT,
+        BookingField.START_DATE,
+        BookingField.START_TIME,
+        BookingField.FINISH_DATE,
+        BookingField.FINISH_TIME,
+    ],
+    Tariff.HOURS_12: [
+        BookingField.SAUNA,
+        BookingField.SECRET_ROOM,
+        BookingField.FIRST_BEDROOM,
+        BookingField.SECOND_BEDROOM,
+        BookingField.START_DATE,
+        BookingField.START_TIME,
+        BookingField.FINISH_DATE,
+        BookingField.FINISH_TIME,
+        BookingField.NUMBER_GUESTS,
+    ],
+    Tariff.WORKER: [
+        BookingField.SAUNA,
+        BookingField.SECRET_ROOM,
+        BookingField.FIRST_BEDROOM,
+        BookingField.SECOND_BEDROOM,
+        BookingField.START_DATE,
+        BookingField.START_TIME,
+        BookingField.FINISH_DATE,
+        BookingField.FINISH_TIME,
+        BookingField.NUMBER_GUESTS,
+    ],
+    Tariff.INCOGNITA_HOURS: [
+        BookingField.PHOTOSHOOT,
+        BookingField.START_DATE,
+        BookingField.START_TIME,
+        BookingField.FINISH_DATE,
+        BookingField.FINISH_TIME,
+        BookingField.NUMBER_GUESTS,
+    ],
+    Tariff.INCOGNITA_DAY: [
+        BookingField.PHOTOSHOOT,
+        BookingField.START_DATE,
+        BookingField.START_TIME,
+        BookingField.FINISH_DATE,
+        BookingField.FINISH_TIME,
+        BookingField.NUMBER_GUESTS,
+    ],
+}
+
+# Base required fields for all bookings
+BASE_REQUIRED = [BookingField.TARIFF, BookingField.CONTACT, BookingField.COMMENT]
 QUESTIONS = {
-    "TARIFF": "Укажи тариф: `12 часов`, `Суточно для пар`, `Суточно от 3-ех человек`, `Инконито 12 часов`, `Инкогнито на сутки`, `Рабочий`.",
-    "START_DATE": "Дата заезда? `ДД.ММ` или `ДД.ММ.ГГГГ`.",
-    "START_TIME": "Время заезда? `HH:MM`.",
-    "FINISH_DATE": "Дата выезда? `ДД.ММ` или `ДД.ММ.ГГГГ`.",
-    "FINISH_TIME": "Время выезда? `HH:MM`.",
-    "FIRST_BEDROOM": "Нужна первая спальня? (`да`/`нет`)",
-    "SECOND_BEDROOM": "Нужна вторая спальня? (`да`/`нет`)",
-    "SAUNA": "Добавить сауну? (`да`/`нет`)",
-    "PHOTOSHOOT": "Нужна фотосъёмка? (`да`/`нет`)",
-    "SECRET_ROOM": "Нужна секретная комната? (`да`/`нет`)",
-    "NUMBER_GUESTS": "Сколько гостей будет? Укажи числом.",
-    "CONTACT": "Контакт для связи: `@username` или телефон с `+`.",
-    "COMMENT": "Комментарий к брони (или напиши `нет`).",
+    BookingField.TARIFF: "Выберите тариф:\n\n👥 `1` - Суточно от 3-ех человек (от 3 гостей)\n💑 `5` - Суточно для пар (для двоих)\n⏰ `0` - 12 часов (дневное бронирование)\n💼 `2` - Рабочий (будни Пн-Чт)\n🕶️ `4` - Инкогнито 12 часов (VIP на 12ч)\n🕶️ `3` - Инкогнито на сутки (VIP посуточно)",
+    BookingField.START_DATE: "Дата заезда? Укажите в формате `ДД.ММ` или `ДД.ММ.ГГГГ`",
+    BookingField.START_TIME: "Время заезда? Укажите в формате `ЧЧ:ММ`",
+    BookingField.FINISH_DATE: "Дата выезда? Укажите в формате `ДД.ММ` или `ДД.ММ.ГГГГ`",
+    BookingField.FINISH_TIME: "Время выезда? Укажите в формате `ЧЧ:ММ`",
+    BookingField.FIRST_BEDROOM: "Выбор основной спальни? (`да`/`нет`)",
+    BookingField.SECOND_BEDROOM: "Выбор дополнительной спальни? (`да`/`нет`)",
+    BookingField.SAUNA: "Добавить сауну к бронированию? (`да`/`нет`)",
+    BookingField.PHOTOSHOOT: "Нужна фотосессия? (`да`/`нет`)",
+    BookingField.SECRET_ROOM: "Добавить секретную комнату? (`да`/`нет`)",
+    BookingField.NUMBER_GUESTS: "Количество гостей? Укажите число",
+    BookingField.CONTACT: "Контакт для связи: укажите `@username` или телефон с `+`",
+    BookingField.COMMENT: "Дополнительные пожелания или комментарий к брони? (напишите `нет` если нет комментариев)",
 }
 
 booking_extractor = booking_extractor.BookingExtractor()
 
 
-def _first_missing(ctx: dict) -> str | None:
+def get_rate_display_name(tariff: Tariff) -> str:
+    """Get display name for rate type"""
+    rate_names = {
+        Tariff.DAY: "СУТОЧНО ОТ 3 ЛЮДЕЙ",
+        Tariff.DAY_FOR_COUPLE: "СУТОЧНО ДЛЯ ПАР",
+        Tariff.HOURS_12: "12 ЧАСОВ",
+        Tariff.WORKER: "РАБОЧИЙ (Пн-Чт)",
+        Tariff.INCOGNITA_HOURS: "ИНКОГНИТО 12 ЧАСОВ",
+        Tariff.INCOGNITA_DAY: "ИНКОГНИТО НА СУТКИ",
+    }
+    return rate_names.get(tariff, str(tariff))
+
+
+def parse_tariff_from_text(text: str) -> Tariff | None:
+    """Parse tariff from user input text"""
+    low = text.lower().strip()
+
+    # Try to parse numeric value first
+    if low.isdigit():
+        try:
+            value = int(low)
+            return Tariff(value)
+        except ValueError:
+            pass
+
+    # Parse by keywords
+    if "12" in low and "инкогнито" not in low:
+        return Tariff.HOURS_12
+    elif "инкогнито" in low and "12" in low:
+        return Tariff.INCOGNITA_HOURS
+    elif "инкогнито" in low and ("сут" in low or "24" in low or "день" in low):
+        return Tariff.INCOGNITA_DAY
+    elif "суточно" in low and ("пар" in low or "два" in low or "2" in low):
+        return Tariff.DAY_FOR_COUPLE
+    elif "суточно" in low and (
+        "3" in low or "трех" in low or "трёх" in low or "от 3" in low
+    ):
+        return Tariff.DAY
+    elif "рабочий" in low or "работа" in low:
+        return Tariff.WORKER
+    elif "сут" in low or "24" in low or "день" in low:
+        return Tariff.DAY_FOR_COUPLE  # Default daily rate
+
+    return None
+
+
+def _first_missing(ctx: dict) -> BookingField | None:
     print(f"DEBUG _first_missing: ctx keys = {list(ctx.keys())}")
-    for f in REQUIRED:
-        if f not in ctx or ctx[f] in (None, ""):
-            print(f"DEBUG: missing field '{f}'")
-            return f
+
+    # Always check tariff first
+    if BookingField.TARIFF.value not in ctx or ctx[BookingField.TARIFF.value] is None:
+        print("DEBUG: missing TARIFF")
+        return BookingField.TARIFF
+
+    # Get required fields for the selected tariff
+    tariff = ctx[BookingField.TARIFF.value]
+    required_fields = RATE_REQUIREMENTS.get(tariff, []) + BASE_REQUIRED
+
+    for field in required_fields:
+        field_key = field.value
+        if field_key not in ctx or ctx[field_key] in (None, ""):
+            print(f"DEBUG: missing field '{field}' for tariff '{tariff}'")
+            return field
     print("DEBUG: no missing fields")
     return None
 
@@ -75,66 +204,51 @@ async def ask_or_fill(state: BookingState) -> BookingState:
         if miss:
             print(f"DEBUG: processing field {miss} with text '{text}'")
             # Process the field and continue without setting await_input
-            if miss == "TARIFF":
-                low = text.lower()
-                print(f"DEBUG TARIFF processing: text='{text}', low='{low}'")
-                if "12" in low and "инкогнито" not in low:
-                    print("DEBUG: setting TARIFF to '12 часов'")
-                    ctx[miss] = "12 часов"
-                elif "инкогнито" in low and "12" in low:
-                    print("DEBUG: setting TARIFF to 'Инконито 12 часов'")
-                    ctx[miss] = "Инконито 12 часов"
-                elif "инкогнито" in low and (
-                    "сут" in low or "24" in low or "день" in low
-                ):
-                    print("DEBUG: setting TARIFF to 'Инкогнито на сутки'")
-                    ctx[miss] = "Инкогнито на сутки"
-                elif "суточно" in low and ("пар" in low or "два" in low or "2" in low):
-                    print("DEBUG: setting TARIFF to 'Суточно для пар'")
-                    ctx[miss] = "Суточно для пар"
-                elif "суточно" in low and (
-                    "3" in low or "трех" in low or "трех" in low or "от 3" in low
-                ):
-                    print("DEBUG: setting TARIFF to 'Суточно от 3-ех человек'")
-                    ctx[miss] = "Суточно от 3-ех человек"
-                elif "рабочий" in low or "работа" in low:
-                    print("DEBUG: setting TARIFF to 'Рабочий'")
-                    ctx[miss] = "Рабочий"
-                elif "сут" in low or "24" in low or "день" in low:
-                    print("DEBUG: setting TARIFF to 'Суточно для пар' (default)")
-                    ctx[miss] = "Суточно для пар"
+            if miss == BookingField.TARIFF:
+                print(f"DEBUG TARIFF processing: text='{text}'")
+                tariff = parse_tariff_from_text(text)
+                if tariff is not None:
+                    print(f"DEBUG: setting TARIFF to '{tariff}'")
+                    ctx[miss.value] = tariff
                 else:
                     print("DEBUG: no TARIFF match found")
             elif miss in {
-                "FIRST_BEDROOM",
-                "SECOND_BEDROOM",
-                "SAUNA",
-                "PHOTOSHOOT",
-                "SECRET_ROOM",
+                BookingField.FIRST_BEDROOM,
+                BookingField.SECOND_BEDROOM,
+                BookingField.SAUNA,
+                BookingField.PHOTOSHOOT,
+                BookingField.SECRET_ROOM,
             }:
                 v = parse_yes_no(text)
                 if v is not None:
-                    ctx[miss] = v
-            elif miss in {"START_DATE", "FINISH_DATE"}:
+                    ctx[miss.value] = v
+            elif miss in {BookingField.START_DATE, BookingField.FINISH_DATE}:
                 # Try exact date format first
                 if is_date(text):
-                    ctx[miss] = norm_date(text)
+                    ctx[miss.value] = norm_date(text)
                 else:
                     # Try to extract date from natural language
                     extracted_date = extract_date_from_natural_language(text)
                     if extracted_date:
-                        ctx[miss] = extracted_date
+                        ctx[miss.value] = extracted_date
                         print(
                             f"DEBUG: extracted date '{extracted_date}' from natural language"
                         )
-            elif miss in {"START_TIME", "FINISH_TIME"} and is_time(text):
-                ctx[miss] = norm_time(text)
-            elif miss == "NUMBER_GUESTS" and text.isdigit() and int(text) > 0:
-                ctx[miss] = int(text)
-            elif miss == "CONTACT" and (text.startswith("@") or text.startswith("+")):
-                ctx[miss] = text
-            elif miss == "COMMENT":
-                ctx[miss] = None if text.lower() in {"нет", "no", "-"} else text
+            elif miss in {
+                BookingField.START_TIME,
+                BookingField.FINISH_TIME,
+            } and is_time(text):
+                ctx[miss.value] = norm_time(text)
+            elif (
+                miss == BookingField.NUMBER_GUESTS and text.isdigit() and int(text) > 0
+            ):
+                ctx[miss.value] = int(text)
+            elif miss == BookingField.CONTACT and (
+                text.startswith("@") or text.startswith("+")
+            ):
+                ctx[miss.value] = text
+            elif miss == BookingField.COMMENT:
+                ctx[miss.value] = None if text.lower() in {"нет", "no", "-"} else text
 
     # Check what's missing and ask next question
     miss = _first_missing(ctx)
@@ -147,26 +261,60 @@ async def ask_or_fill(state: BookingState) -> BookingState:
             "reply": QUESTIONS[miss],
             "done": False,
             "await_input": False,  # Don't exit subgraph, continue processing
-            "last_asked": miss,
+            "last_asked": miss.value,
             "active_subgraph": "booking",
         }
 
     # All fields collected - show summary and wait for "confirm"
-    summary = (
-        "📋 Резюме заявки:\n"
-        f"Тариф: {ctx['TARIFF']}\n"
-        f"Заезд: {ctx['START_DATE']} {ctx['START_TIME']}\n"
-        f"Выезд: {ctx['FINISH_DATE']} {ctx['FINISH_TIME']}\n"
-        f"1-я спальня: {'да' if ctx['FIRST_BEDROOM'] else 'нет'}\n"
-        f"2-я спальня: {'да' if ctx['SECOND_BEDROOM'] else 'нет'}\n"
-        f"Сауна: {'да' if ctx['SAUNA'] else 'нет'}\n"
-        f"Фотосъёмка: {'да' if ctx['PHOTOSHOOT'] else 'нет'}\n"
-        f"Секретная: {'да' if ctx['SECRET_ROOM'] else 'нет'}\n"
-        f"Гостей: {ctx['NUMBER_GUESTS']}\n"
-        f"Контакт: {ctx['CONTACT']}\n"
-        f"Комментарий: {ctx['COMMENT'] or '—'}\n"
-        "Напиши `подтверждаю` или пришли правки текстом."
+    tariff = ctx[BookingField.TARIFF.value]
+    required_fields = RATE_REQUIREMENTS.get(tariff, []) + BASE_REQUIRED
+
+    rate_display = get_rate_display_name(tariff)
+    summary_lines = ["📋 Резюме заявки:", f"Тариф: {rate_display}"]
+
+    # Add dates and times (always present)
+    if BookingField.START_DATE in required_fields:
+        summary_lines.append(
+            f"Заезд: {ctx[BookingField.START_DATE.value]} {ctx[BookingField.START_TIME.value]}"
+        )
+        summary_lines.append(
+            f"Выезд: {ctx[BookingField.FINISH_DATE.value]} {ctx[BookingField.FINISH_TIME.value]}"
+        )
+
+    # Add optional fields based on tariff
+    if BookingField.FIRST_BEDROOM in required_fields:
+        summary_lines.append(
+            f"1-я спальня: {'да' if ctx[BookingField.FIRST_BEDROOM.value] else 'нет'}"
+        )
+    if BookingField.SECOND_BEDROOM in required_fields:
+        summary_lines.append(
+            f"2-я спальня: {'да' if ctx[BookingField.SECOND_BEDROOM.value] else 'нет'}"
+        )
+    if BookingField.SAUNA in required_fields:
+        summary_lines.append(
+            f"Сауна: {'да' if ctx[BookingField.SAUNA.value] else 'нет'}"
+        )
+    if BookingField.PHOTOSHOOT in required_fields:
+        summary_lines.append(
+            f"Фотосъёмка: {'да' if ctx[BookingField.PHOTOSHOOT.value] else 'нет'}"
+        )
+    if BookingField.SECRET_ROOM in required_fields:
+        summary_lines.append(
+            f"Секретная: {'да' if ctx[BookingField.SECRET_ROOM.value] else 'нет'}"
+        )
+    if BookingField.NUMBER_GUESTS in required_fields:
+        summary_lines.append(f"Гостей: {ctx[BookingField.NUMBER_GUESTS.value]}")
+
+    # Always add contact and comment
+    summary_lines.extend(
+        [
+            f"Контакт: {ctx[BookingField.CONTACT.value]}",
+            f"Комментарий: {ctx[BookingField.COMMENT.value] or '—'}",
+            "Напиши `подтверждаю` или пришли правки текстом.",
+        ]
     )
+
+    summary = "\n".join(summary_lines)
     return {
         "context": ctx,
         "reply": summary,
@@ -177,9 +325,9 @@ async def ask_or_fill(state: BookingState) -> BookingState:
 
 
 async def finalize(state: BookingState) -> BookingState:
-    ctx = state["context"]
     # here you can check slot / rules
-    # booking_id = await create_booking(ctx)
+    # booking_id = await create_booking(state["context"])
+    _ = state  # Acknowledge parameter usage for linter
     booking_id = 1111
     return {"reply": f"Готово! Бронь {booking_id}. ✅", "done": True}
 
