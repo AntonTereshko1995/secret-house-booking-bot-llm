@@ -1,11 +1,8 @@
-
 from pydantic import BaseModel, Field
 
 
 class BookingExtract(BaseModel):
-    TARIFF: str | None = Field(
-        None, description="Допустимо: '12 часов','1 сутки', ..."
-    )
+    TARIFF: str | None = Field(None, description="Допустимо: '12 часов','1 сутки', ...")
     FIRST_BEDROOM: bool | None = None
     SECOND_BEDROOM: bool | None = None
     SAUNA: bool | None = None

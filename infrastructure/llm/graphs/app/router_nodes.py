@@ -24,14 +24,44 @@ async def router_node(s: AppState) -> dict[str, Any]:
     if s.get("done") and "подтверждаю" in t:
         return {"intent": "booking", "active_subgraph": "booking"}
 
+    # If we have FAQ context, continue FAQ conversation for follow-up questions
+    if s.get("faq_context"):
+        return {"intent": "faq"}
+
     if re.search(r"(заброниров|бронь|арендовать)", t):
         return {"intent": "booking", "active_subgraph": "booking"}
-    if re.search(r"(цен[аыу]|стоимост|сколько стоит|прайс|тариф|расценк|price|cost|how much)", t):
+    if re.search(
+        r"(цен[аыу]|стоимост|сколько.*стоит|прайс|тариф|расценк|price|cost|how much)", t
+    ):
         return {"intent": "price"}
     if re.search(r"(свободн|дат[ыа]|календар)", t):
         return {"intent": "availability"}
     if re.search(r"(измен|перенос)", t):
         return {"intent": "change"}
+    # Enhanced FAQ intent detection with comprehensive Russian patterns
     if re.search(r"(правил|что такое|faq)", t):
+        return {"intent": "faq"}
+    # Question words and patterns
+    if re.search(
+        r"(что.*есть|что.*включ|что.*входит|какие.*услуги|какие.*удобства|какие.*комнат)", t
+    ):
+        return {"intent": "faq"}
+    if re.search(r"(как.*работает|как.*добраться|как.*заселиться|как.*оплатить)", t):
+        return {"intent": "faq"}
+    if re.search(r"(где.*находится|где.*дом|где.*расположен|где.*парков)", t):
+        return {"intent": "faq"}
+    if re.search(r"(можно ли|нельзя ли|разрешено ли|есть ли)", t):
+        return {"intent": "faq"}
+    if re.search(r"(расскажи|опиши|покажи|информац|подробнее)", t):
+        return {"intent": "faq"}
+    if re.search(r"(условия|требования|политика|ограничения)", t):
+        return {"intent": "faq"}
+    # Equipment and room-specific questions
+    if re.search(r"(оборудование|мебель|аксессуар|техника)", t):
+        return {"intent": "faq"}
+    if re.search(r"(секретн.*комнат|зелен.*спальн|бел.*спальн|сауна|кухн|гостин)", t):
+        return {"intent": "faq"}
+    # English patterns
+    if re.search(r"(what.*is|what.*include|how.*work|where.*located|can.*i|may.*i)", t):
         return {"intent": "faq"}
     return {"intent": "unknown"}

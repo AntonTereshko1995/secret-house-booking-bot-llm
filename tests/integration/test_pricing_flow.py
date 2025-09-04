@@ -78,7 +78,9 @@ class TestPricingFlowIntegration:
     @pytest.fixture
     def app_graph(self, mock_pricing_config):
         """Create app graph with mocked pricing config"""
-        with patch("builtins.open", mock_open(read_data=json.dumps(mock_pricing_config))):
+        with patch(
+            "builtins.open", mock_open(read_data=json.dumps(mock_pricing_config))
+        ):
             with patch("pathlib.Path.exists", return_value=True):
                 return build_app_graph()
 
@@ -272,7 +274,7 @@ class TestPricingFlowIntegration:
         assert "reply" in result
         assert result["intent"] == "price"
         # Should show available tariffs when can't find specific one
-        assert ("📋" in result["reply"] or "💡" in result["reply"])
+        assert "📋" in result["reply"] or "💡" in result["reply"]
 
     @pytest.mark.asyncio
     async def test_complex_pricing_query_with_all_parameters(self, app_graph):

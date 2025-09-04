@@ -358,7 +358,8 @@ class TestAvailableDatesFlow:
 
                     slots = [
                         AvailabilitySlot(
-                            date=start_date, is_available=False  # Дата занята
+                            date=start_date,
+                            is_available=False,  # Дата занята
                         )
                     ]
 

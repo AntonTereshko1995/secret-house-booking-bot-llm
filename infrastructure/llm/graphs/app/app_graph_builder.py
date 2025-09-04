@@ -8,6 +8,7 @@ from infrastructure.llm.graphs.available_dates.availability_node import (
 from infrastructure.llm.graphs.booking.booking_graph import build_booking_graph
 from infrastructure.llm.graphs.common.graph_state import AppState
 from infrastructure.llm.graphs.fallback.fallback_node import fallback_node
+from infrastructure.llm.graphs.faq.faq_node import faq_node
 from infrastructure.llm.graphs.pricing.pricing_node import pricing_node
 
 
@@ -19,6 +20,7 @@ def build_app_graph():
     g.add_node("booking", booking_sub)  # subgraph as node
     g.add_node("availability", availability_node)
     g.add_node("pricing", pricing_node)
+    g.add_node("faq", faq_node)
     g.add_node("fallback", fallback_node)
 
     g.add_edge(START, "router")
@@ -40,7 +42,7 @@ def build_app_graph():
             "availability": "availability",
             "price": "pricing",
             "change": "fallback",
-            "faq": "fallback",
+            "faq": "faq",
             "unknown": "fallback",
         },
     )
@@ -49,6 +51,7 @@ def build_app_graph():
     g.add_edge("booking", END)
     g.add_edge("availability", END)
     g.add_edge("pricing", END)
+    g.add_edge("faq", END)
     g.add_edge("fallback", END)
 
     # Add memory saver for state persistence

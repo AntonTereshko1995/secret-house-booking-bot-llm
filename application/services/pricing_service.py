@@ -119,7 +119,9 @@ class PricingService:
             # Определяем тариф
             tariff = await self._get_tariff_for_request(request)
             if not tariff:
-                raise ValueError(f"Неизвестный тариф: {request.tariff or request.tariff_id}")
+                raise ValueError(
+                    f"Неизвестный тариф: {request.tariff or request.tariff_id}"
+                )
 
             # Определяем количество дней
             duration_days = self._calculate_duration_days(request, tariff)
@@ -145,7 +147,8 @@ class PricingService:
                 total_cost=total_cost,
                 max_people=tariff.max_people,
                 includes_transfer=tariff.is_transfer,
-                includes_photoshoot=tariff.is_photoshoot and tariff.photoshoot_price == 0,
+                includes_photoshoot=tariff.is_photoshoot
+                and tariff.photoshoot_price == 0,
             )
 
             # Форматируем сообщение
@@ -160,10 +163,14 @@ class PricingService:
             )
 
         except Exception:
-            logger.exception("Error calculating pricing", extra={"request": request.dict()})
+            logger.exception(
+                "Error calculating pricing", extra={"request": request.dict()}
+            )
             raise
 
-    async def _get_tariff_for_request(self, request: PricingRequest) -> TariffRate | None:
+    async def _get_tariff_for_request(
+        self, request: PricingRequest
+    ) -> TariffRate | None:
         """Определяет подходящий тариф для запроса"""
         if request.tariff_id is not None:
             return self.tariff_rates.get(request.tariff_id)
@@ -181,7 +188,10 @@ class PricingService:
                     if "суточн" in tariff_name_lower:
                         if "двоих" in tariff_lower and "двоих" in tariff_name_lower:
                             return tariff
-                        elif "3 человек" in tariff_name_lower or ("двоих" not in tariff_lower and "двоих" not in tariff_name_lower):
+                        elif "3 человек" in tariff_name_lower or (
+                            "двоих" not in tariff_lower
+                            and "двоих" not in tariff_name_lower
+                        ):
                             return tariff
 
                 # 12-часовые тарифы
@@ -214,7 +224,9 @@ class PricingService:
         # По умолчанию - суточный тариф от 3 человек
         return self.tariff_rates.get(1)
 
-    def _calculate_duration_days(self, request: PricingRequest, tariff: TariffRate) -> int:
+    def _calculate_duration_days(
+        self, request: PricingRequest, tariff: TariffRate
+    ) -> int:
         """Вычисляет количество дней"""
         if request.duration_days:
             return request.duration_days
@@ -237,11 +249,17 @@ class PricingService:
                 return tariff.multi_day_prices[day_key]
 
             # Если точного количества дней нет, берем максимальное доступное
-            max_days = max([int(k) for k in tariff.multi_day_prices.keys() if k.isdigit()])
+            max_days = max(
+                [int(k) for k in tariff.multi_day_prices.keys() if k.isdigit()]
+            )
             if duration_days > max_days:
                 # Рассчитываем пропорционально
                 base_for_max_days = tariff.multi_day_prices[str(max_days)]
-                return base_for_max_days * Decimal(str(duration_days)) / Decimal(str(max_days))
+                return (
+                    base_for_max_days
+                    * Decimal(str(duration_days))
+                    / Decimal(str(max_days))
+                )
 
         # Если многодневных цен нет, используем базовую цену за день
         return tariff.price * duration_days
@@ -318,7 +336,9 @@ class PricingService:
         ]
 
         if breakdown.duration_days > 1:
-            suggestions.append("🏡 Для многодневного бронирования уточните точные даты.")
+            suggestions.append(
+                "🏡 Для многодневного бронирования уточните точные даты."
+            )
 
         return suggestions[0]
 

@@ -87,7 +87,9 @@ class TestPricingNode:
         """Test pricing node with comparison request"""
         # Setup mocks
         mock_extractor.extract_comparison_request.return_value = True
-        mock_service.get_tariffs_summary.return_value = "📋 Доступные тарифы:\n• Тариф 1: 500 руб."
+        mock_service.get_tariffs_summary.return_value = (
+            "📋 Доступные тарифы:\n• Тариф 1: 500 руб."
+        )
 
         # Test
         state = {"text": "сравни тарифы"}
@@ -107,9 +109,13 @@ class TestPricingNode:
         """Test pricing node with general price inquiry"""
         # Setup mocks
         mock_extractor.extract_comparison_request.return_value = False
-        mock_extractor.extract_pricing_requirements.return_value = PricingRequest()  # No specific tariff
+        mock_extractor.extract_pricing_requirements.return_value = (
+            PricingRequest()
+        )  # No specific tariff
         mock_extractor.is_pricing_query.return_value = True
-        mock_service.get_tariffs_summary.return_value = "📋 Доступные тарифы:\n• Тариф 1"
+        mock_service.get_tariffs_summary.return_value = (
+            "📋 Доступные тарифы:\n• Тариф 1"
+        )
 
         # Test
         state = {"text": "какие цены"}
@@ -133,7 +139,9 @@ class TestPricingNode:
             tariff="неизвестный тариф"
         )
         mock_service.calculate_pricing.side_effect = ValueError("Неизвестный тариф")
-        mock_service.get_tariffs_summary.return_value = "📋 Доступные тарифы:\n• Тариф 1"
+        mock_service.get_tariffs_summary.return_value = (
+            "📋 Доступные тарифы:\n• Тариф 1"
+        )
 
         # Test
         state = {"text": "цена неизвестного тарифа"}
@@ -205,7 +213,9 @@ class TestPricingNode:
         mock_service.calculate_pricing.return_value = sample_pricing_response
 
         # Test
-        state = {"text": "сколько стоит суточный тариф для двоих на 3 дня с сауной и фотосессией"}
+        state = {
+            "text": "сколько стоит суточный тариф для двоих на 3 дня с сауной и фотосессией"
+        }
         result = await pricing_node(state)
 
         # Assertions

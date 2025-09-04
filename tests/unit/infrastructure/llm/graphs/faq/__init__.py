@@ -1,0 +1,1 @@
+"""FAQ graph tests package"""

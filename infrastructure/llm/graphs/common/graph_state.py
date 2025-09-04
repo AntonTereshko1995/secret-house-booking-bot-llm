@@ -9,6 +9,9 @@ class AppState(TypedDict, total=False):
     context: dict  # accumulated booking fields
     reply: str  # what to send to chat
     await_input: bool | None  # whether graph awaits user input
+    # FAQ-specific fields
+    faq_data: dict | None  # FAQ response data
+    faq_context: dict | None  # FAQ conversation context
 
 
 class BookingState(TypedDict, total=False):

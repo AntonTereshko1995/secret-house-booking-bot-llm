@@ -29,7 +29,6 @@ class RateLimitMiddleware(BaseMiddleware):
         event: Message,
         data: dict[str, Any],
     ) -> Any:
-
         user_id = event.from_user.id
         key = f"rate_limit:{user_id}"
 
