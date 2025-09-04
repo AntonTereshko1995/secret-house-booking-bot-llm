@@ -190,7 +190,9 @@ class TestPricingExtractor:
         assert extractor._extract_guest_count("просто аренда") is None
 
     @patch("infrastructure.llm.extractors.pricing_extractor.DateExtractor")
-    def test_extract_time_parameters_with_dates(self, mock_date_extractor_class, extractor):
+    def test_extract_time_parameters_with_dates(
+        self, mock_date_extractor_class, extractor
+    ):
         """Test time parameters extraction with dates"""
         # Setup mock
         mock_extractor = MagicMock()
@@ -198,12 +200,18 @@ class TestPricingExtractor:
 
         start_date = datetime(2025, 3, 15, 14, 0)
         end_date = datetime(2025, 3, 17, 12, 0)
-        mock_extractor.extract_dates_from_text.return_value = (start_date, end_date, "15-17 марта")
+        mock_extractor.extract_dates_from_text.return_value = (
+            start_date,
+            end_date,
+            "15-17 марта",
+        )
 
         # Create new extractor to use mock
         extractor = PricingExtractor()
 
-        duration_days, extracted_start, extracted_end = extractor._extract_time_parameters("с 15 по 17 марта")
+        duration_days, extracted_start, extracted_end = (
+            extractor._extract_time_parameters("с 15 по 17 марта")
+        )
 
         assert duration_days == 2
         assert extracted_start == start_date
@@ -253,7 +261,9 @@ class TestPricingExtractor:
     async def test_extract_pricing_requirements_error_handling(self, extractor):
         """Test error handling in extraction"""
         # Mock date extractor to raise exception
-        extractor.date_extractor.extract_dates_from_text = MagicMock(side_effect=Exception("Test error"))
+        extractor.date_extractor.extract_dates_from_text = MagicMock(
+            side_effect=Exception("Test error")
+        )
 
         text = "сколько стоит аренда на завтра"
         request = await extractor.extract_pricing_requirements(text)

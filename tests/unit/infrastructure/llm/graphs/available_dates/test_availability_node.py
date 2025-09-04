@@ -19,7 +19,6 @@ TZ = ZoneInfo("Europe/Minsk")
 
 
 class TestAvailabilityNode:
-
     @pytest.fixture
     def mock_app_state(self):
         """Создает мок состояния приложения"""
@@ -306,7 +305,6 @@ class TestAvailabilityNode:
 
 
 class TestFormatAvailabilityResponse:
-
     @pytest.fixture
     def availability_period_all_free(self):
         """Период где все дни свободны"""

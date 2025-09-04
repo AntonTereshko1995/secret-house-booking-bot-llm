@@ -37,7 +37,9 @@ async def pricing_node(s: AppState) -> dict[str, Any]:
             }
 
         # Извлекаем требования к ценообразованию
-        pricing_request = await pricing_extractor.extract_pricing_requirements(user_text)
+        pricing_request = await pricing_extractor.extract_pricing_requirements(
+            user_text
+        )
 
         logger.debug(
             "Extracted pricing requirements",
@@ -83,10 +85,10 @@ async def pricing_node(s: AppState) -> dict[str, Any]:
 
     except ValueError as ve:
         # Ошибки валидации (например, неизвестный тариф)
-        logger.warning("Validation error in pricing_node", extra={
-            "user_text": user_text,
-            "error": str(ve)
-        })
+        logger.warning(
+            "Validation error in pricing_node",
+            extra={"user_text": user_text, "error": str(ve)},
+        )
 
         reply = "⚠️ Не удалось найти указанный тариф.\n\n"
         reply += await pricing_service.get_tariffs_summary()
@@ -102,7 +104,9 @@ async def pricing_node(s: AppState) -> dict[str, Any]:
         logger.exception("Error in pricing_node", extra={"user_text": user_text})
 
         reply = "😔 Произошла ошибка при расчете стоимости."
-        reply += "\n\nПопробуйте переформулировать запрос или обратитесь к администратору."
+        reply += (
+            "\n\nПопробуйте переформулировать запрос или обратитесь к администратору."
+        )
         reply += "\n\n💡 Пример корректного запроса:"
         reply += "\n*'Сколько стоит суточный тариф для двоих на 2 дня?'*"
 

@@ -25,7 +25,11 @@ class PricingExtractor:
         self.tariff_patterns = {
             # Русские паттерны
             "суточно от 3": ["суточн.*3.*человек", "суточн.*троих", "суточн.*три.*чел"],
-            "суточно для двоих": ["суточн.*двоих", "суточн.*2.*человек", "суточн.*двух.*чел"],
+            "суточно для двоих": [
+                "суточн.*двоих",
+                "суточн.*2.*человек",
+                "суточн.*двух.*чел",
+            ],
             "12 часов": ["12.*час", "двенадцать.*час", "полсуток"],
             "рабочий": ["рабочий", "дневной", "будний"],
             "инкогнито день": ["инкогнито.*день", "инкогнито.*24", "инкогнито.*сутки"],
@@ -33,7 +37,6 @@ class PricingExtractor:
             "абонемент 3": ["абонемент.*3", "три.*посещения", "3.*посещения"],
             "абонемент 5": ["абонемент.*5", "пять.*посещений", "5.*посещений"],
             "абонемент 8": ["абонемент.*8", "восемь.*посещений", "8.*посещений"],
-
             # Английские паттерны
             "daily for 3": ["daily.*3.*people", "daily.*three.*people"],
             "daily for 2": ["daily.*2.*people", "daily.*two.*people", "daily.*couple"],
@@ -47,9 +50,26 @@ class PricingExtractor:
         # Паттерны для дополнительных услуг
         self.addon_patterns = {
             "sauna": ["сауна", "баня", "sauna", "steam"],
-            "photoshoot": ["фото", "съемка", "фотосессия", "photo", "shoot", "photography"],
-            "secret_room": ["секретн.*комната", "тайн.*комната", "secret.*room", "hidden.*room"],
-            "second_bedroom": ["втор.*спальня", "дополн.*спальня", "second.*bedroom", "extra.*bedroom"],
+            "photoshoot": [
+                "фото",
+                "съемка",
+                "фотосессия",
+                "photo",
+                "shoot",
+                "photography",
+            ],
+            "secret_room": [
+                "секретн.*комната",
+                "тайн.*комната",
+                "secret.*room",
+                "hidden.*room",
+            ],
+            "second_bedroom": [
+                "втор.*спальня",
+                "дополн.*спальня",
+                "second.*bedroom",
+                "extra.*bedroom",
+            ],
         }
 
     async def extract_pricing_requirements(self, text: str) -> PricingRequest:
@@ -83,14 +103,16 @@ class PricingExtractor:
                 "Extracted pricing requirements",
                 extra={
                     "original_text": text,
-                    "extracted_request": request.dict(exclude_none=True)
-                }
+                    "extracted_request": request.dict(exclude_none=True),
+                },
             )
 
             return request
 
         except Exception:
-            logger.exception("Error extracting pricing requirements", extra={"text": text})
+            logger.exception(
+                "Error extracting pricing requirements", extra={"text": text}
+            )
             # Возвращаем базовый запрос при ошибке
             return PricingRequest()
 
@@ -154,7 +176,10 @@ class PricingExtractor:
 
         # Паттерны для чисел
         number_patterns = [
-            (r"(\d+)\s*(?:человек|чел|людей|гост|people|guests|persons)", lambda m: int(m.group(1))),
+            (
+                r"(\d+)\s*(?:человек|чел|людей|гост|people|guests|persons)",
+                lambda m: int(m.group(1)),
+            ),
             (r"(?:один|одного|1)\s*(?:человек|чел|гост)", lambda m: 1),
             (r"(?:два|двух|двоих|2)\s*(?:человек|чел|гост|людей)", lambda m: 2),
             (r"(?:три|трех|троих|3)\s*(?:человек|чел|гост|людей)", lambda m: 3),
@@ -181,7 +206,9 @@ class PricingExtractor:
 
         return None
 
-    def _extract_time_parameters(self, text: str) -> tuple[int | None, datetime | None, datetime | None]:
+    def _extract_time_parameters(
+        self, text: str
+    ) -> tuple[int | None, datetime | None, datetime | None]:
         """Извлекает временные параметры (дни, даты)"""
         duration_days = None
         start_date = None
@@ -231,13 +258,36 @@ class PricingExtractor:
 
         pricing_keywords = [
             # Русские
-            "цена", "цены", "стоимость", "сколько стоит", "прайс", "расценки",
-            "тариф", "тарифы", "прайс-лист", "стоит ли", "цену", "цене",
-            "дешево", "дорого", "бюджет", "расходы", "затрат",
-
+            "цена",
+            "цены",
+            "стоимость",
+            "сколько стоит",
+            "прайс",
+            "расценки",
+            "тариф",
+            "тарифы",
+            "прайс-лист",
+            "стоит ли",
+            "цену",
+            "цене",
+            "дешево",
+            "дорого",
+            "бюджет",
+            "расходы",
+            "затрат",
             # Английские
-            "price", "cost", "how much", "pricing", "rate", "rates",
-            "tariff", "fee", "charge", "expensive", "cheap", "budget"
+            "price",
+            "cost",
+            "how much",
+            "pricing",
+            "rate",
+            "rates",
+            "tariff",
+            "fee",
+            "charge",
+            "expensive",
+            "cheap",
+            "budget",
         ]
 
         return any(keyword in text_lower for keyword in pricing_keywords)
@@ -247,9 +297,20 @@ class PricingExtractor:
         text_lower = text.lower()
 
         comparison_keywords = [
-            "сравни", "сравнить", "разница", "различие", "отличие",
-            "что лучше", "какой выбрать", "посоветуй", "recommend",
-            "compare", "difference", "better", "best", "choose"
+            "сравни",
+            "сравнить",
+            "разница",
+            "различие",
+            "отличие",
+            "что лучше",
+            "какой выбрать",
+            "посоветуй",
+            "recommend",
+            "compare",
+            "difference",
+            "better",
+            "best",
+            "choose",
         ]
 
         return any(keyword in text_lower for keyword in comparison_keywords)

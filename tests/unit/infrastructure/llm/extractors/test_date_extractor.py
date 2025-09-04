@@ -15,7 +15,6 @@ TZ = ZoneInfo("Europe/Minsk")
 
 
 class TestDateExtractor:
-
     @pytest.fixture
     def date_extractor(self):
         """Создает экземпляр DateExtractor для тестов"""

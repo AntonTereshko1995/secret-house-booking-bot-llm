@@ -17,7 +17,6 @@ TZ = ZoneInfo("Europe/Minsk")
 
 
 class TestAvailabilityService:
-
     @pytest.fixture
     def availability_service(self):
         """Создает экземпляр AvailabilityService для тестов"""

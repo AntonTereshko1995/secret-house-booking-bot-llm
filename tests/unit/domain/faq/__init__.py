@@ -1,0 +1,1 @@
+"""FAQ domain tests package"""
