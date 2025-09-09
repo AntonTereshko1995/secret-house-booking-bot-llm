@@ -25,35 +25,36 @@ class Settings(BaseSettings):
     log_format: str = Field("json", env="LOG_FORMAT")
 
     # Telemetry
-    otel_endpoint: str | None = Field(None, env="OTEL_ENDPOINT")
-    otel_service_name: str = Field("booking-bot", env="OTEL_SERVICE_NAME")
+    # otel_endpoint: str | None = Field(None, env="OTEL_ENDPOINT")
+    # otel_service_name: str = Field("booking-bot", env="OTEL_SERVICE_NAME")
 
     # Security
     rate_limit_per_minute: int = Field(60, env="RATE_LIMIT_PER_MINUTE")
-    max_message_length: int = Field(4096, env="MAX_MESSAGE_LENGTH")
+    # max_message_length: int = Field(4096, env="MAX_MESSAGE_LENGTH")
 
     # Timezone
     timezone: str = Field("Europe/Minsk", env="TIMEZONE")
 
     # Pricing
-    pricing_cache_ttl: int = Field(300, env="PRICING_CACHE_TTL")
-    default_tariff: str = Field("standard", env="DEFAULT_TARIFF")
+    # pricing_cache_ttl: int = Field(300, env="PRICING_CACHE_TTL")
+    # default_tariff: str = Field("standard", env="DEFAULT_TARIFF")
     pricing_config_path: str = Field(
         "config/pricing_config.json", env="PRICING_CONFIG_PATH"
     )
 
     # FAQ System
-    faq_llm_temperature: float = Field(0.7, env="FAQ_LLM_TEMPERATURE")
-    faq_max_tokens: int = Field(500, env="FAQ_MAX_TOKENS")
-    faq_conversation_history_limit: int = Field(
-        12, env="FAQ_CONVERSATION_HISTORY_LIMIT"
-    )
-    faq_response_timeout: int = Field(30, env="FAQ_RESPONSE_TIMEOUT")  # seconds
-    faq_escalation_threshold: float = Field(0.3, env="FAQ_ESCALATION_THRESHOLD")
-    faq_context_cache_ttl: int = Field(1800, env="FAQ_CONTEXT_CACHE_TTL")  # 30 minutes
-    faq_max_daily_questions_per_user: int = Field(
-        50, env="FAQ_MAX_DAILY_QUESTIONS_PER_USER"
-    )
+    # faq_llm_temperature: float = Field(0.1, env="FAQ_LLM_TEMPERATURE")
+    # faq_max_tokens: int = Field(500, env="FAQ_MAX_TOKENS")
+    # faq_conversation_history_limit: int = Field(12, env="FAQ_CONVERSATION_HISTORY_LIMIT")
+    # faq_response_timeout: int = Field(30, env="FAQ_RESPONSE_TIMEOUT")  # seconds
+    # faq_escalation_threshold: float = Field(0.3, env="FAQ_ESCALATION_THRESHOLD")
+    # faq_context_cache_ttl: int = Field(1800, env="FAQ_CONTEXT_CACHE_TTL")  # 30 minutes
+    # faq_max_daily_questions_per_user: int = Field(50, env="FAQ_MAX_DAILY_QUESTIONS_PER_USER")
+
+    # Payment Configuration
+    payment_card_number: str = Field("1234 5678 9012 3456", env="PAYMENT_CARD_NUMBER")
+    payment_phone_number: str = Field("+375291234567", env="PAYMENT_PHONE_NUMBER")
+    admin_chat_id: int = Field(-1001234567890, env="ADMIN_CHAT_ID")
 
     class Config:
         env_file = ".env"

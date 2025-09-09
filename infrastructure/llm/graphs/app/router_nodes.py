@@ -24,20 +24,30 @@ async def router_node(s: AppState) -> dict[str, Any]:
     if s.get("done") and "подтверждаю" in t:
         return {"intent": "booking", "active_subgraph": "booking"}
 
-    # If we have FAQ context, continue FAQ conversation for follow-up questions
-    if s.get("faq_context"):
-        return {"intent": "faq"}
-
-    if re.search(r"(заброниров|бронь|арендовать)", t):
+    # Check for explicit intent switches FIRST (even from FAQ context)
+    # For mixed intents, we check in order of priority and return first match
+    
+    # Check for booking first (highest priority for mixed intents)
+    if re.search(r"(заброниров|бронь|арендовать|снять|сним)", t):
         return {"intent": "booking", "active_subgraph": "booking"}
+    
+    # Check for pricing
     if re.search(
         r"(цен[аыу]|стоимост|сколько.*стоит|прайс|тариф|расценк|price|cost|how much)", t
     ):
         return {"intent": "price"}
-    if re.search(r"(свободн|дат[ыа]|календар)", t):
+    
+    # Check for availability - expanded patterns
+    if re.search(r"(свободн|дат[ыа]|календар|когда.*можно|когда.*приехать)", t):
         return {"intent": "availability"}
+    
     if re.search(r"(измен|перенос)", t):
         return {"intent": "change"}
+
+    # If we have FAQ context, continue FAQ conversation for follow-up questions
+    # BUT only if user didn't explicitly request booking/pricing/availability above
+    if s.get("faq_context"):
+        return {"intent": "faq"}
     # Enhanced FAQ intent detection with comprehensive Russian patterns
     if re.search(r"(правил|что такое|faq)", t):
         return {"intent": "faq"}

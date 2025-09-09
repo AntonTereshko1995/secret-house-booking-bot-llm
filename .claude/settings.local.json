@@ -26,7 +26,15 @@
       "Bash(uv run ruff format:*)",
       "Bash(uv run:*)",
       "Bash(find:*)",
-      "Bash(uv add:*)"
+      "Bash(uv add:*)",
+      "Bash(tree:*)",
+      "WebFetch(domain:core.telegram.org)",
+      "WebFetch(domain:docs.aiogram.dev)",
+      "mcp__serena__replace_symbol_body",
+      "mcp__serena__insert_before_symbol",
+      "Bash(timeout 30 python apps/telegram_bot/main.py)",
+      "mcp__serena__insert_after_symbol",
+      "Bash(pkill:*)"
     ],
     "deny": [],
     "ask": []

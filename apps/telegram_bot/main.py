@@ -5,7 +5,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
-from apps.telegram_bot.handlers import callbacks, messages
+from apps.telegram_bot.handlers import callbacks, messages, payments
 from apps.telegram_bot.middlewares.rate_limit import RateLimitMiddleware
 from core.config import settings
 from core.logging import get_logger, setup_logging
@@ -28,7 +28,8 @@ async def main():
 
     # Register handlers
     dp.include_router(messages.router)
-    dp.include_router(callbacks.router)
+    dp.include_router(payments.router)  # Payment handlers (document/photo uploads)
+    dp.include_router(callbacks.router)  # Keep callbacks last to catch remaining callbacks
 
     try:
         await dp.start_polling(bot)

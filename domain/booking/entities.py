@@ -3,9 +3,12 @@
 """
 
 from datetime import datetime
+from typing import Optional
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
+
+from .payment import PaymentStatus, PaymentProof
 
 
 class Booking(BaseModel):
@@ -27,6 +30,8 @@ class Booking(BaseModel):
     contact: str
     comment: str | None = None
     status: str = Field(default="pending")  # pending, confirmed, cancelled
+    payment_status: PaymentStatus = Field(default=PaymentStatus.PENDING, description="Payment status")
+    payment_proof: Optional[PaymentProof] = Field(None, description="Payment proof document/photo")
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 

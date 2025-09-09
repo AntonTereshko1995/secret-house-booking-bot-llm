@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 
 
 class AppState(TypedDict, total=False):
@@ -19,3 +19,8 @@ class BookingState(TypedDict, total=False):
     text: str  # last user message
     reply: str  # response to user
     done: bool
+    payment_status: str | None  # payment status: pending, proof_uploaded, admin_approved, admin_rejected
+    payment_proof: dict[str, Any] | None  # payment proof metadata (file_id, type, size, etc.)
+    await_input: bool | None  # whether graph awaits user input
+    active_subgraph: str | None  # current active subgraph
+    last_asked: str | None  # last field asked for

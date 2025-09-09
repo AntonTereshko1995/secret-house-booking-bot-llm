@@ -12,8 +12,230 @@ class HouseContextBuilder:
     def __init__(self):
         self.house_info = self._build_house_information()
 
+    def _load_pricing_config(self) -> dict:
+        """Load pricing configuration from JSON file"""
+        import json
+        from core.config import settings
+        
+        with open(settings.pricing_config_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+
+    def _build_tariffs_from_config(self, pricing_config: dict) -> list:
+        """Build tariffs list from pricing configuration"""
+        tariffs = []
+        
+        for rental_price in pricing_config.get("rental_prices", []):
+            tariff_name = rental_price.get("name", "")
+            
+            # Map tariff IDs to display names
+            if rental_price.get("tariff") == 1:
+                tariff_name = "ТАРИФ 'СУТОЧНО ОТ 3 ЧЕЛОВЕК'"
+                tariff = {
+                    "name": tariff_name,
+                    "prices": {},
+                    "extras": {},
+                    "features": [
+                        "Доступ ко всем комнатам дома",
+                        f"Максимальное количество гостей — {rental_price.get('max_people', 6)}",
+                        "Свободный выбор времени заезда",
+                    ],
+                    "bonus": "При бронировании от 2 дней — дарим 12 часов в подарок при повторном бронировании!"
+                }
+                
+                # Build multi-day prices
+                multi_day_prices = rental_price.get("multi_day_prices", {})
+                for days, price in multi_day_prices.items():
+                    if int(days) <= 3:
+                        day_text = f"{days} день" if days == "1" else f"{days} дня"
+                        tariff["prices"][day_text] = f"{price} BYN"
+                
+                # Add extras
+                if rental_price.get("sauna_price", 0) > 0:
+                    tariff["extras"]["Сауна"] = f"{rental_price['sauna_price']} BYN"
+                if rental_price.get("photoshoot_price", 0) > 0:
+                    tariff["extras"]["Фотосессия"] = f"{rental_price['photoshoot_price']} BYN"
+                
+                tariffs.append(tariff)
+                
+            elif rental_price.get("tariff") == 7:
+                tariff_name = "ТАРИФ 'СУТОЧНО ДЛЯ ПАР'"
+                tariff = {
+                    "name": tariff_name,
+                    "prices": {},
+                    "extras": {},
+                    "features": [
+                        "Доступ ко всем комнатам дома",
+                        f"Максимальное количество гостей — {rental_price.get('max_people', 2)}",
+                        "Свободный выбор времени заезда",
+                    ],
+                    "bonus": "При бронировании от 2 дней — дарим 12 часов в подарок при повторном бронировании!"
+                }
+                
+                # Build multi-day prices
+                multi_day_prices = rental_price.get("multi_day_prices", {})
+                for days, price in multi_day_prices.items():
+                    if int(days) <= 3:
+                        day_text = f"{days} день" if days == "1" else f"{days} дня"
+                        tariff["prices"][day_text] = f"{price} BYN"
+                
+                # Add extras
+                if rental_price.get("sauna_price", 0) > 0:
+                    tariff["extras"]["Сауна"] = f"{rental_price['sauna_price']} BYN"
+                if rental_price.get("photoshoot_price", 0) > 0:
+                    tariff["extras"]["Фотосессия"] = f"{rental_price['photoshoot_price']} BYN"
+                
+                tariffs.append(tariff)
+                
+            elif rental_price.get("tariff") == 0:
+                tariff = {
+                    "name": "ТАРИФ '12 ЧАСОВ'",
+                    "price": f"{rental_price.get('price', 250)} BYN",
+                    "extras": {},
+                    "features": [
+                        "Включает одну спальню на выбор",
+                        f"Максимальное количество гостей — {rental_price.get('max_people', 2)}",
+                        "Свободный выбор времени заезда",
+                    ]
+                }
+                
+                # Add extras
+                if rental_price.get("secret_room_price", 0) > 0:
+                    tariff["extras"]["Секретная комната"] = f"{rental_price['secret_room_price']} BYN"
+                if rental_price.get("second_bedroom_price", 0) > 0:
+                    tariff["extras"]["Доступ ко второй спальне"] = f"{rental_price['second_bedroom_price']} BYN"
+                if rental_price.get("sauna_price", 0) > 0:
+                    tariff["extras"]["Сауна"] = f"{rental_price['sauna_price']} BYN"
+                if rental_price.get("extra_hour_price", 0) > 0:
+                    tariff["extras"]["Дополнительный 1 час"] = f"{rental_price['extra_hour_price']} BYN"
+                
+                tariffs.append(tariff)
+                
+            elif rental_price.get("tariff") == 2:
+                tariff = {
+                    "name": "ТАРИФ 'РАБОЧИЙ' (с понедельника по четверг)",
+                    "price": f"{rental_price.get('price', 180)} BYN",
+                    "extras": {},
+                    "features": [
+                        "Включает одну спальню на выбор",
+                        f"Максимальное количество гостей — {rental_price.get('max_people', 2)}",
+                        "Бронирование: с 11:00 до 20:00 или с 22:00 до 09:00",
+                    ]
+                }
+                
+                # Add extras
+                if rental_price.get("secret_room_price", 0) > 0:
+                    tariff["extras"]["Секретная комната"] = f"{rental_price['secret_room_price']} BYN"
+                if rental_price.get("second_bedroom_price", 0) > 0:
+                    tariff["extras"]["Доступ ко второй спальне"] = f"{rental_price['second_bedroom_price']} BYN"
+                if rental_price.get("sauna_price", 0) > 0:
+                    tariff["extras"]["Сауна"] = f"{rental_price['sauna_price']} BYN"
+                if rental_price.get("extra_hour_price", 0) > 0:
+                    tariff["extras"]["Дополнительный 1 час"] = f"{rental_price['extra_hour_price']} BYN"
+                
+                tariffs.append(tariff)
+                
+            elif rental_price.get("tariff") == 3:
+                tariff = {
+                    "name": "ТАРИФ 'ИНКОГНИТО' (VIP-опция)",
+                    "prices": {"Сутки": f"{rental_price.get('price', 900)} BYN"},
+                    "features": [
+                        "Доступ ко всем комнатам дома",
+                        "Без заключения договора",
+                        "Отключение внешних камер наблюдения по периметру дома",
+                    ],
+                    "gifts": [
+                        "Трансфер от/до дома на автомобиле бизнес-класса",
+                        "Бутылка вина, лёгкие закуски и сауна",
+                        "Бесплатная фотосессия при аренде на сутки (2 часа, бронь за неделю)",
+                    ]
+                }
+                tariffs.append(tariff)
+                
+            elif rental_price.get("tariff") == 4:
+                tariff = {
+                    "name": "ТАРИФ 'ИНКОГНИТО' (VIP-опция)",
+                    "prices": {"12 часов": f"{rental_price.get('price', 600)} BYN"},
+                    "features": [
+                        "Доступ ко всем комнатам дома",
+                        "Без заключения договора",
+                        "Отключение внешних камер наблюдения по периметру дома",
+                    ],
+                    "gifts": [
+                        "Трансфер от/до дома на автомобиле бизнес-класса",
+                        "Бутылка вина, лёгкие закуски и сауна",
+                    ]
+                }
+                # Check if this tariff already exists (merge with tariff 3)
+                existing_incognito = None
+                for t in tariffs:
+                    if "ИНКОГНИТО" in t["name"]:
+                        existing_incognito = t
+                        break
+                
+                if existing_incognito:
+                    existing_incognito["prices"]["12 часов"] = f"{rental_price.get('price', 600)} BYN"
+                else:
+                    tariffs.append(tariff)
+                    
+            elif rental_price.get("tariff") == 5:
+                tariff = {
+                    "name": "Абонемент на 3 посещения",
+                    "price": f"{rental_price.get('price', 680)} BYN",
+                    "duration": "12 часов",
+                    "extras": {},
+                    "features": [f"Максимальное количество гостей — {rental_price.get('max_people', 3)}"]
+                }
+                
+                # Add extras
+                if rental_price.get("sauna_price", 0) > 0:
+                    tariff["extras"]["Сауна"] = f"{rental_price['sauna_price']} BYN"
+                if rental_price.get("extra_hour_price", 0) > 0:
+                    tariff["extras"]["Дополнительный 1 час"] = f"{rental_price['extra_hour_price']} BYN"
+                
+                tariffs.append(tariff)
+                
+            elif rental_price.get("tariff") == 6:
+                tariff = {
+                    "name": "Абонемент на 5 посещений",
+                    "price": f"{rental_price.get('price', 1000)} BYN",
+                    "duration": "12 часов",
+                    "extras": {},
+                    "features": [f"Максимальное количество гостей — {rental_price.get('max_people', 3)}"]
+                }
+                
+                # Add extras
+                if rental_price.get("sauna_price", 0) > 0:
+                    tariff["extras"]["Сауна"] = f"{rental_price['sauna_price']} BYN"
+                if rental_price.get("extra_hour_price", 0) > 0:
+                    tariff["extras"]["Дополнительный 1 час"] = f"{rental_price['extra_hour_price']} BYN"
+                
+                tariffs.append(tariff)
+                
+            elif rental_price.get("tariff") == 8:
+                tariff = {
+                    "name": "Абонемент на 8 посещений",
+                    "price": f"{rental_price.get('price', 1600)} BYN",
+                    "duration": "12 часов",
+                    "extras": {},
+                    "features": [f"Максимальное количество гостей — {rental_price.get('max_people', 3)}"]
+                }
+                
+                # Add extras
+                if rental_price.get("sauna_price", 0) > 0:
+                    tariff["extras"]["Сауна"] = f"{rental_price['sauna_price']} BYN"
+                if rental_price.get("extra_hour_price", 0) > 0:
+                    tariff["extras"]["Дополнительный 1 час"] = f"{rental_price['extra_hour_price']} BYN"
+                
+                tariffs.append(tariff)
+        
+        return tariffs
+
     def _build_house_information(self) -> HouseInformation:
         """Build comprehensive house information from user requirements"""
+        # Load pricing configuration
+        pricing_config = self._load_pricing_config()
+        tariffs = self._build_tariffs_from_config(pricing_config)
+        
         return HouseInformation(
             location="12 км от Минска направление агрогородок Ратомка, в окружении леса, уединённое место без посторонних, закрытая территория участка с автоматическими воротами",
             rooms={
@@ -32,103 +254,7 @@ class HouseContextBuilder:
                 "cleaning": "уборка происходит после каждого клиента, на уборку тратится 2-3 часа, дизинфекция всех кожаных изделий, кварцевание помещений, влажная уборка дома, замена постельного белья и полотенцев",
                 "check_in": "происходит без лишних лиц, самостоятельно. За 1 день до брони мы сообщим маршрут до дома и пароль от ключницы",
             },
-            tariffs=[
-                {
-                    "name": "ТАРИФ 'СУТОЧНО ОТ 3 ЧЕЛОВЕК'",
-                    "prices": {
-                        "1 день": "700 BYN",
-                        "2 дня": "1300 BYN",
-                        "3 дня": "1800 BYN",
-                    },
-                    "extras": {"Сауна": "100 BYN", "Фотосессия": "100 BYN"},
-                    "features": [
-                        "Доступ ко всем комнатам дома",
-                        "Максимальное количество гостей — 6",
-                        "Свободный выбор времени заезда",
-                    ],
-                    "bonus": "При бронировании от 2 дней — дарим 12 часов в подарок при повторном бронировании!",
-                },
-                {
-                    "name": "ТАРИФ 'СУТОЧНО ДЛЯ ПАР'",
-                    "prices": {
-                        "1 день": "500 BYN",
-                        "2 дня": "900 BYN",
-                        "3 дня": "1200 BYN",
-                    },
-                    "extras": {"Сауна": "100 BYN", "Фотосессия": "100 BYN"},
-                    "features": [
-                        "Доступ ко всем комнатам дома",
-                        "Максимальное количество гостей — 2",
-                        "Свободный выбор времени заезда",
-                    ],
-                    "bonus": "При бронировании от 2 дней — дарим 12 часов в подарок при повторном бронировании!",
-                },
-                {
-                    "name": "ТАРИФ '12 ЧАСОВ'",
-                    "price": "250 BYN",
-                    "extras": {
-                        "Доступ ко второй спальне": "70 BYN",
-                        "Секретная комната": "70 BYN",
-                        "Сауна": "100 BYN",
-                        "Дополнительный 1 час": "30 BYN",
-                    },
-                    "features": [
-                        "Включает одну спальню на выбор",
-                        "Максимальное количество гостей — 2",
-                        "Свободный выбор времени заезда",
-                    ],
-                },
-                {
-                    "name": "ТАРИФ 'РАБОЧИЙ' (с понедельника по четверг)",
-                    "price": "180 BYN",
-                    "extras": {
-                        "Доступ ко второй спальне": "50 BYN",
-                        "Секретная комната": "50 BYN",
-                        "Сауна": "100 BYN",
-                        "Дополнительный 1 час": "30 BYN",
-                    },
-                    "features": [
-                        "Включает одну спальню на выбор",
-                        "Максимальное количество гостей — 2",
-                        "Бронирование: с 11:00 до 20:00 или с 22:00 до 09:00",
-                    ],
-                },
-                {
-                    "name": "ТАРИФ 'ИНКОГНИТО' (VIP-опция)",
-                    "prices": {"Сутки": "900 BYN", "12 часов": "600 BYN"},
-                    "features": [
-                        "Доступ ко всем комнатам дома",
-                        "Без заключения договора",
-                        "Отключение внешних камер наблюдения по периметру дома",
-                    ],
-                    "gifts": [
-                        "Трансфер от/до дома на автомобиле бизнес-класса",
-                        "Бутылка вина, лёгкие закуски и сауна",
-                        "Бесплатная фотосессия при аренде на сутки (2 часа, бронь за неделю)",
-                    ],
-                },
-                {
-                    "name": "Абонемент на 3 посещения",
-                    "price": "680 BYN",
-                    "duration": "12 часов",
-                    "extras": {"Сауна": "100 BYN", "Дополнительный 1 час": "30 BYN"},
-                    "features": ["Максимальное количество гостей — 3"],
-                },
-                {
-                    "name": "Абонемент на 5 посещений",
-                    "price": "1000 BYN",
-                    "duration": "12 часов",
-                    "extras": {"Сауна": "100 BYN", "Дополнительный 1 час": "30 BYN"},
-                    "features": ["Максимальное количество гостей — 3"],
-                },
-                {
-                    "name": "Абонемент на 8 посещений",
-                    "price": "1600 BYN",
-                    "duration": "12 часов",
-                    "extras": {"Сауна": "100 BYN", "Дополнительный 1 час": "30 BYN"},
-                    "features": ["Максимальное количество гостей — 3"],
-                },
-            ],
+            tariffs=tariffs,
             policies={
                 "contract": "заключение договора обязательно (кроме тарифа Инкогнито)",
                 "payment": "оплата наличкой или переводом на карту. мы берем 80 рублей в качестве предоплаты переводом по карте. После получения денег, мы вносим бронирование в календарь",
@@ -138,8 +264,8 @@ class HouseContextBuilder:
             contact_info={
                 "admin_telegram": "@the_secret_house",
                 "photos_link": "https://drive.google.com/drive/u/2/folders/14x2AMnkZJ8rgKa94U973CmMKWXa6feRw",
-                "booking_instruction": "пользователь должен перейти в телеграм боте в пункт меню 'Забронировать' и заполнить форму",
-                "availability_check": "Если пользователь хочет узнать свободные даты в доме, то отправляй его в пункт меню 'Свободные дата' в телеграм боте",
+                "booking_instruction": "Напиши дату, время, тариф, количество гостей и мы создадим бронирование",
+                "availability_check": "Если пользователь хочет узнать свободные даты в доме, то отправляй его в пункт меню 'Свободные датата' в телеграм боте",
                 "certificates_purchase": "Для покупки сертификата нужно перейти в меню телеграм бота и выбрать пункт 'Приобрести подарочный сертификат'",
             },
         )
@@ -164,7 +290,7 @@ class HouseContextBuilder:
 
 🧖‍♀️ Сауна: {self.house_info.rooms["sauna"]}
 
-🚿 Ванные комнаты: {self.house_info.rooms["bathrooms"]}
+🛿 Ванные комнаты: {self.house_info.rooms["bathrooms"]}
 
 🔥 Секретная комната: {self.house_info.rooms["secret_room"]}
 

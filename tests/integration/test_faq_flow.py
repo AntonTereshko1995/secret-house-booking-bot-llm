@@ -71,7 +71,8 @@ class TestFAQFlow:
             assert result1["intent"] == "faq"
             assert "faq_context" in result1
 
-            # Second question - should maintain context
+            # Second question - pricing question should switch to price intent
+            # even when we have FAQ context (new behavior)
             state2 = AppState(
                 user_id=12345,
                 text="а сколько это стоит?",
@@ -80,10 +81,21 @@ class TestFAQFlow:
             )
 
             result2 = await app_graph.ainvoke(state2, config)
-            assert result2["intent"] == "faq"
+            assert result2["intent"] == "price"  # Should switch to pricing, not stay in FAQ
 
+            # Third question - actual FAQ follow-up should maintain context
+            state3 = AppState(
+                user_id=12345,
+                text="расскажи еще про удобства",
+                intent="unknown",
+                faq_context=result1["faq_context"],
+            )
+
+            result3 = await app_graph.ainvoke(state3, config)
+            assert result3["intent"] == "faq"
+            
             # Context should be updated
-            context = result2["faq_context"]
+            context = result3["faq_context"]
             assert context["total_questions"] >= 2
 
     @pytest.mark.asyncio
