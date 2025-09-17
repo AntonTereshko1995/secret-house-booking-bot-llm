@@ -8,6 +8,11 @@ class Settings(BaseSettings):
 
     # Database
     database_url: str = Field(..., env="DATABASE_URL")
+    database_pool_size: int = Field(20, env="DATABASE_POOL_SIZE")
+    database_max_overflow: int = Field(30, env="DATABASE_MAX_OVERFLOW")
+    database_pool_timeout: int = Field(30, env="DATABASE_POOL_TIMEOUT")
+    database_pool_recycle: int = Field(3600, env="DATABASE_POOL_RECYCLE")
+    database_echo: bool = Field(False, env="DATABASE_ECHO")
 
     # Redis
     redis_url: str = Field(..., env="REDIS_URL")

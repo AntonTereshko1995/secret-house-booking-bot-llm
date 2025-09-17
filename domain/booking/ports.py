@@ -13,7 +13,7 @@ class BookingRepository(ABC):
 
     @abstractmethod
     async def create(self, booking: Booking) -> Booking:
-        """Create booking"""
+        """Create a new booking"""
         pass
 
     @abstractmethod
@@ -22,8 +22,8 @@ class BookingRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_user_id(self, user_id: int) -> list[Booking]:
-        """Get user bookings"""
+    async def get_by_user_id(self, user_id: UUID) -> list[Booking]:
+        """Get all bookings for a user"""
         pass
 
     @abstractmethod
@@ -34,6 +34,35 @@ class BookingRepository(ABC):
     @abstractmethod
     async def delete(self, booking_id: UUID) -> bool:
         """Delete booking"""
+        pass
+
+    @abstractmethod
+    async def get_all(self) -> list[Booking]:
+        """Get all bookings"""
+        pass
+
+    @abstractmethod
+    async def find_by_date_range(
+        self, start_date: str, end_date: str
+    ) -> list[Booking]:
+        """Find bookings within a date range"""
+        pass
+
+    @abstractmethod
+    async def find_by_status(self, status: str) -> list[Booking]:
+        """Find bookings by status"""
+        pass
+
+    @abstractmethod
+    async def modify_booking_level(
+        self, booking_id: UUID, new_level: str, modification_reason: str
+    ) -> Booking:
+        """Modify booking level with audit trail"""
+        pass
+
+    @abstractmethod
+    async def get_booking_modifications(self, booking_id: UUID) -> list[dict]:
+        """Get all modifications for a booking"""
         pass
 
 

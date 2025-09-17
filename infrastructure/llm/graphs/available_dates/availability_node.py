@@ -1,14 +1,11 @@
 from typing import Any
 
-from application.services.availability_service import AvailabilityService
-from application.services.booking_service import BookingService
 from core.logging import get_logger
+from infrastructure.container import get_availability_service
 from infrastructure.llm.extractors.date_extractor import DateExtractor
 from infrastructure.llm.graphs.common.graph_state import AppState
 
 logger = get_logger(__name__)
-svc = BookingService()
-availability_service = AvailabilityService()
 date_extractor = DateExtractor()
 
 
@@ -35,6 +32,9 @@ async def availability_node(s: AppState) -> dict[str, Any]:
             },
         )
 
+        # Получаем сервис из контейнера
+        availability_service = get_availability_service()
+        
         # Получаем информацию о доступности
         availability_data = await availability_service.get_availability_for_period(
             start_date, end_date

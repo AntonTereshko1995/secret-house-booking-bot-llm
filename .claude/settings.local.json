@@ -34,7 +34,10 @@
       "mcp__serena__insert_before_symbol",
       "Bash(timeout 30 python apps/telegram_bot/main.py)",
       "mcp__serena__insert_after_symbol",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(ALEMBIC_OFFLINE=true uv run alembic revision --autogenerate -m \"Create initial tables\")",
+      "Bash(DATABASE_URL=\"postgresql+asyncpg://user:pass@localhost/dbname\" uv run alembic revision --autogenerate -m \"Create initial tables\")",
+      "Bash(ALEMBIC_OFFLINE=true uv run alembic revision --autogenerate -m \"Add phone_number to users\")"
     ],
     "deny": [],
     "ask": []

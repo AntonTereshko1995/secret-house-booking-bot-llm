@@ -15,15 +15,7 @@ from domain.booking.payment import PaymentStatus
 from application.services.pricing_service import PricingService
 from infrastructure.llm.extractors import booking_extractor
 from infrastructure.llm.graphs.common.graph_state import BookingState
-
-
-class Tariff(Enum):
-    HOURS_12 = 0
-    DAY = 1
-    WORKER = 2
-    INCOGNITA_DAY = 3
-    INCOGNITA_HOURS = 4
-    DAY_FOR_COUPLE = 5
+from domain.booking.entities import Tariff
 
 
 class BookingField(Enum):

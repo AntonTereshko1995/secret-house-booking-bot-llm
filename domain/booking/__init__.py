@@ -8,13 +8,19 @@ from .availability import (
     AvailabilityResponse,
     AvailabilitySlot,
 )
-from .entities import Booking, BookingRequest
+from .entities import Booking, BookingRequest, BookingStatus, Tariff
+from .ports import BookingRepository, AvailabilityService, NotificationService
 
 __all__ = [
     "Booking",
-    "BookingRequest",
+    "BookingRequest", 
+    "BookingStatus",
+    "Tariff",
     "AvailabilitySlot",
     "AvailabilityPeriod",
     "AvailabilityRequest",
     "AvailabilityResponse",
+    "BookingRepository",
+    "AvailabilityService",
+    "NotificationService",
 ]

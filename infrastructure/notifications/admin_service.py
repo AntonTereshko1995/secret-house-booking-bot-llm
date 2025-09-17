@@ -6,10 +6,9 @@ from aiogram import Bot
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from core.logging import get_logger
-from domain.booking.entities import Booking
+from domain.booking.entities import Booking, Tariff
 from domain.booking.payment import PaymentProof
 from infrastructure.llm.graphs.booking.booking_graph import (
-    Tariff,
     get_rate_display_name,
 )
 
@@ -119,7 +118,7 @@ class AdminNotificationService:
         # Add contact and cost info
         message_parts.extend(
             [
-                f"📱 <b>Контакт:</b> {booking.contact}",
+                f"📱 <b>Контакт:</b> Telegram ID {booking.user_id}",
                 f"💰 <b>Стоимость:</b> {total_cost or 'Рассчитывается'} BYN",
             ]
         )
